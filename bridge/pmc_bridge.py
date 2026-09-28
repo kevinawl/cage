@@ -22,6 +22,13 @@ Wire format, one JSON object per event, units mm and degrees:
     {"type":"telemetry", "t":<unix s>,
      "flyways":[{"id":1, "w":91.5, "cpu":41.7, "amp":42.2, "motor":38.0}, ...],
      "force":{"1":[fx, fy, fz, tx, ty, tz]}}   (N, N m)             2 Hz
+    {"type":"receivers", "boards":[{"mac", "ip", "state", "name", "fw",
+     "endpoints":[{id, name, type, active, value}], "power_ep", "power",
+     "xbot", "label"}, ...]}   Saguaro receiver boards (saguaro.py)  5 Hz
+
+Receivers: POST /api/receivers/<MAC>/connect | /disconnect, and
+POST /api/receivers/<MAC> {"xbot": 1|null, "endpoint": "P_out", "label": "..."}
+to assign a board to a mover. Assignments persist in bridge/receivers.json.
     {"type":"status", "connected":bool, "source":"pmc"|"mock",
      "pmc":"PMC_FULLCTRL"|null, "master":bool|null, "error":str|null,
      "layout":{"cols":4, "rows":1, "tile":240,
@@ -47,6 +54,9 @@ import time
 import xml.etree.ElementTree as ET
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
+from urllib.parse import unquote
+
+from saguaro import ReceiverHub
 
 PAGE = Path(__file__).resolve().parent.parent / "index.html"
 TILE_MM = 240          # S3 flyway, 240 x 240 mm; the config XML carries no size
@@ -68,6 +78,7 @@ class Hub:
         self.seq = 0
         self.pose = None
         self.tele = None
+        self.rx = None
         self.status = {"type": "status", "connected": False, "source": None,
                        "pmc": None, "master": None, "error": "starting"}
 
@@ -83,6 +94,12 @@ class Hub:
             self.seq += 1
             self.cond.notify_all()
 
+    def publish_rx(self, rx):
+        with self.cond:
+            self.rx = rx
+            self.seq += 1
+            self.cond.notify_all()
+
     def publish_status(self, **kw):
         with self.cond:
             self.status = {**self.status, **kw}
@@ -92,7 +109,7 @@ class Hub:
     def wait(self, seq, timeout):
         with self.cond:
             self.cond.wait_for(lambda: self.seq != seq, timeout)
-            return self.seq, self.pose, self.tele, dict(self.status)
+            return self.seq, self.pose, self.tele, self.rx, dict(self.status)
 
 
 # --------------------------------------------------------------------------- sources
@@ -273,9 +290,63 @@ def poll_loop(hub, args, stop):
 
 # --------------------------------------------------------------------------- http
 
-def make_handler(hub):
+def rx_loop(hub, rxhub, stop):
+    while not stop.is_set():
+        hub.publish_rx({"type": "receivers", "boards": rxhub.snapshot()})
+        stop.wait(.2)
+
+
+MAC = __import__("re").compile(r"^(?:[0-9A-F]{2}:){5}[0-9A-F]{2}$")
+
+
+def make_handler(hub, rxhub, port):
+    local = {None, "null", f"http://localhost:{port}", f"http://127.0.0.1:{port}"}
+
     class Handler(BaseHTTPRequestHandler):
         def log_message(self, *a): pass
+
+        def _reply(self, code, obj=None):
+            body = json.dumps(obj if obj is not None else {"ok": code < 400}).encode()
+            self.send_response(code)
+            if self.headers.get("Origin") in local - {None}:     # file:// pages send Origin: null
+                self.send_header("Access-Control-Allow-Origin", self.headers["Origin"])
+            self.send_header("Content-Type", "application/json")
+            self.send_header("Content-Length", str(len(body)))
+            self.end_headers(); self.wfile.write(body)
+
+        def do_POST(self):
+            # Only the page itself may drive the boards: no requests from other sites.
+            if self.headers.get("Origin") not in local:
+                return self._reply(403, {"error": "origin not allowed"})
+            parts = [unquote(x) for x in self.path.split("?")[0].strip("/").split("/")]
+            if len(parts) < 3 or parts[:2] != ["api", "receivers"] or not MAC.match(parts[2]):
+                return self._reply(404, {"error": "unknown route"})
+            mac, action = parts[2], (parts[3] if len(parts) > 3 else None)
+            if rxhub is None:
+                return self._reply(503, {"error": "receivers disabled"})
+            if action == "connect":
+                rxhub.connect(mac); return self._reply(200)
+            if action == "disconnect":
+                rxhub.disconnect(mac); return self._reply(200)
+            if action is not None:
+                return self._reply(404, {"error": "unknown action"})
+            try:
+                n = int(self.headers.get("Content-Length") or 0)
+                body = json.loads(self.rfile.read(min(n, 4096)) or b"{}")
+            except ValueError:
+                return self._reply(400, {"error": "bad json"})
+            kw = {}
+            if "xbot" in body:
+                if body["xbot"] is not None and not isinstance(body["xbot"], int):
+                    return self._reply(400, {"error": "xbot must be an integer or null"})
+                kw["xbot"] = body["xbot"]
+            for k in ("endpoint", "label"):
+                if k in body:
+                    if body[k] is not None and not isinstance(body[k], str):
+                        return self._reply(400, {"error": f"{k} must be a string or null"})
+                    kw[k] = (body[k] or None) and body[k][:64]
+            rxhub.update(mac, **kw)
+            return self._reply(200)
 
         def do_GET(self):
             path = self.path.split("?")[0]
@@ -296,12 +367,14 @@ def make_handler(hub):
             self.send_header("Cache-Control", "no-cache")
             self.send_header("Access-Control-Allow-Origin", "*")   # index.html opens from file://
             self.end_headers()
-            seq, sent_status, sent_tele = -1, None, None
+            seq, sent_status, sent_tele, sent_rx = -1, None, None, None
             try:
                 while True:
-                    seq, pose, tele, status = hub.wait(seq, 5)
+                    seq, pose, tele, rx, status = hub.wait(seq, 5)
                     if status != sent_status:
                         self._send(status); sent_status = status
+                    if rx is not None and rx is not sent_rx:
+                        self._send(rx); sent_rx = rx
                     if tele is not None and tele is not sent_tele and status.get("connected"):
                         self._send(tele); sent_tele = tele
                     if pose is not None and status.get("connected"):
@@ -326,11 +399,19 @@ def main():
     ap.add_argument("--gain-mastership", action="store_true",
                     help="take mastership on connect (only if reads fail without it)")
     ap.add_argument("--mock", action="store_true", help="fake movers, no hardware")
+    ap.add_argument("--no-receivers", action="store_true", help="don't listen for Saguaro receiver boards")
+    ap.add_argument("--receivers-file", default=None, metavar="PATH",
+                    help="where receiver assignments are saved (default bridge/receivers.json)")
     args = ap.parse_args()
 
     hub, stop = Hub(), threading.Event()
     threading.Thread(target=poll_loop, args=(hub, args, stop), daemon=True).start()
-    srv = ThreadingHTTPServer(("127.0.0.1", args.port), make_handler(hub))
+    rxhub = None
+    if not args.no_receivers:
+        rxhub = ReceiverHub(log=lambda m: print(m, flush=True), **({"store": args.receivers_file} if args.receivers_file else {}))
+        rxhub.start()
+        threading.Thread(target=rx_loop, args=(hub, rxhub, stop), daemon=True).start()
+    srv = ThreadingHTTPServer(("127.0.0.1", args.port), make_handler(hub, rxhub, args.port))
     srv.daemon_threads = True
     print(f"[bridge] open http://localhost:{args.port}  "
           f"({'mock' if args.mock else 'PMC ' + args.ip}, {args.hz:g} Hz) - Ctrl+C to stop", flush=True)

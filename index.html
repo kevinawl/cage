@@ -204,6 +204,77 @@ canvas#ruler{display:block;width:100%;height:120px}
   white-space:pre;overflow:hidden;text-overflow:ellipsis}
 .mstat .spark{height:30px;margin-top:6px}
 
+/* ---------- receivers ---------- */
+.rxb{padding:14px 16px 16px;border-top:1px solid var(--border)}
+.rxb:first-child{border-top:0}
+.rxb-hd{display:flex;align-items:center;gap:8px;min-width:0}
+.rxb-nm{font-weight:600;font-size:14px;letter-spacing:-.01em;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.rxb-hd .btn{margin-left:auto;flex:none}
+.rxb-hd .state{white-space:nowrap;flex:none}
+.rxb-id{font-family:var(--fm);font-size:11px;color:var(--text-3);margin-top:3px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.rxb-pw{display:grid;grid-template-columns:auto 1fr;align-items:end;gap:14px;margin-top:12px}
+.rxb-pw .v{font-size:28px;font-weight:600;letter-spacing:-.04em;line-height:1}
+.rxb-pw .v small{font-size:13px;font-weight:450;color:var(--text-3);letter-spacing:0;margin-left:3px}
+.rxb-pw .spark{height:34px;margin:0}
+.rxb-sel{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:12px}
+.rxb-sel label{display:block;font-size:12px;color:var(--text-3);margin-bottom:4px}
+.rxb-sel select{padding:6px 8px;font-size:12.5px}
+.rxb-eps{display:flex;flex-wrap:wrap;gap:4px 12px;margin-top:10px;font-family:var(--fm);font-size:11px;color:var(--text-3)}
+.rxb-eps b{color:var(--text-1);font-weight:450}
+.rxb-err{font-size:12px;color:var(--critical);margin-top:8px}
+.mrx{margin-top:14px;padding:11px 12px 12px;border-radius:var(--r-in);background:var(--accent-soft)}
+.mrx .k{font-size:12px;color:var(--text-2)} .mrx .k b{color:var(--text-1);font-weight:600}
+.mrx-row{display:grid;grid-template-columns:auto 1fr;align-items:end;gap:14px;margin-top:3px}
+.mrx .v{font-size:26px;font-weight:600;letter-spacing:-.04em;line-height:1.05;color:var(--text-1)}
+.mrx .v small{font-size:13px;font-weight:450;color:var(--text-2);letter-spacing:0;margin-left:3px}
+.mrx .spark{height:30px;margin:0}
+
+/* ---------- view options ---------- */
+.btn .ic{width:14px;height:14px;flex:none;opacity:.8}
+.btn[aria-expanded="true"]{background:var(--surface-2);border-color:var(--text-3)}
+.viewpop{position:fixed;top:66px;right:max(24px,calc((100vw - 1440px)/2 + 24px));width:328px;max-width:calc(100vw - 32px);
+  max-height:calc(100vh - 90px);overflow:auto;background:var(--surface);border-radius:var(--r);z-index:30;
+  box-shadow:0 1px 2px rgba(24,32,52,.06),0 28px 64px -24px rgba(24,32,52,.38),inset 0 0 0 1px var(--border);
+  transform-origin:top right;animation:vp-in .18s var(--ease)}
+@keyframes vp-in{from{opacity:0;transform:translateY(-6px) scale(.985)}}
+.vp-hd{display:flex;align-items:baseline;gap:10px;padding:15px 18px 11px;position:sticky;top:0;background:var(--surface);z-index:1}
+.vp-hd h3{margin:0;font-size:14.5px;font-weight:600;letter-spacing:-.01em}
+.vp-hd .hsub{margin-right:auto}
+.vp-reset{border:0;background:none;padding:2px 0;font-size:12.5px;color:var(--text-2);text-decoration:underline;
+  text-underline-offset:3px;text-decoration-color:var(--border-strong)}
+.vp-reset:hover{color:var(--text-1);text-decoration-color:currentColor}
+.vp-grp{padding:10px 18px 12px;border-top:1px solid var(--border)}
+.vp-grp h4{margin:0 0 4px;font-size:12px;font-weight:500;color:var(--text-3)}
+.vp-row{display:flex;align-items:center;gap:12px;padding:6px 0;font-size:13px;cursor:pointer;user-select:none}
+.vp-row span{margin-right:auto}
+.tgl{width:32px;height:18px;border-radius:9px;border:0;padding:0;background:var(--border-strong);position:relative;flex:none;
+  transition:background .2s var(--ease)}
+.tgl::after{content:"";position:absolute;top:2px;left:2px;width:14px;height:14px;border-radius:50%;background:#fff;
+  box-shadow:0 1px 2px rgba(24,32,52,.25);transition:transform .22s var(--ease)}
+.tgl[aria-checked="true"]{background:var(--accent)}
+.tgl[aria-checked="true"]::after{transform:translateX(14px)}
+.vp-lbl{display:flex;justify-content:space-between;font-size:13px;margin:8px 0 7px}
+.vp-lbl em{font-style:normal;color:var(--text-3);font-size:12px}
+.vp-sws{display:flex;gap:9px;flex-wrap:wrap;padding:0 0 4px 2px}
+.swc{width:24px;height:24px;border-radius:50%;border:0;padding:0;background:var(--c);
+  box-shadow:inset 0 0 0 1px rgba(24,32,52,.12);transition:box-shadow .18s var(--ease),transform .12s var(--ease)}
+.swr{width:58px;height:16px;border-radius:5px;border:0;padding:0;background:var(--c);
+  box-shadow:inset 0 0 0 1px rgba(24,32,52,.1);transition:box-shadow .18s var(--ease),transform .12s var(--ease)}
+.swc:hover,.swr:hover{transform:translateY(-1px)}
+.swc[aria-checked="true"],.swr[aria-checked="true"]{box-shadow:0 0 0 2px var(--surface),0 0 0 3.5px var(--text-1)}
+.vp-seg{margin:0 0 4px}
+.vp-seg .tab{flex:1}
+
+/* hidden by the view options (attributes on <html>, so no view code has to know) */
+[data-hide-kpis] #kpis,[data-hide-fwpanel] #flywayPanel,[data-hide-mvpanel] #moverPanel,[data-hide-rxpanel] #rxbPanel,
+[data-hide-mpos] .mover .coords,[data-hide-mlift] .mstat:first-child,[data-hide-merr] .mstat:nth-child(2),
+[data-hide-mlift][data-hide-merr] .mstats,[data-hide-fwspark] .fw .spark,[data-hide-fwtemps] .fw-temps,
+[data-hide-cplots] #plotPanel,[data-hide-cruler] #rulerPanel,[data-hide-cnotes] #notePanel{display:none!important}
+[data-hide-mlift] .mstats,[data-hide-merr] .mstats{grid-template-columns:1fr}
+[data-stage="soft"] .stage{background:#dfe2e8;background-image:radial-gradient(ellipse at 50% 40%,#eceef2 0,#d9dce3 75%)}
+[data-stage="dark"] .stage{background:#1b1e24;background-image:radial-gradient(ellipse at 50% 35%,#2a2e36 0,#16181d 75%)}
+[data-stage="dark"] .hint{color:#8d93a0}
+
 .ftip{position:fixed;left:0;top:0;pointer-events:none;background:#1b1e24;border-radius:var(--r-in);
   padding:6px 9px;font-size:12px;color:#eef0f4;transform:translate(-50%,calc(-100% - 12px));white-space:nowrap;
   opacity:0;transition:opacity .12s var(--ease);z-index:20;box-shadow:0 8px 24px -8px rgba(24,32,52,.45)}
@@ -227,6 +298,9 @@ canvas#ruler{display:block;width:100%;height:120px}
     </div>
     <span class="badge sim" id="simBadge"><span class="dot"></span>Simulated data</span>
     <span class="badge link" id="srcBadge"><span class="dot"></span>—</span>
+    <button class="btn" id="btnView" aria-haspopup="dialog" aria-expanded="false" aria-controls="viewPop">
+      <svg class="ic" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round">
+        <path d="M2 4.5h7M12.5 4.5H14M2 11.5h2.5M8 11.5h6"/><circle cx="10.75" cy="4.5" r="1.75"/><circle cx="6.25" cy="11.5" r="1.75"/></svg>View</button>
   </div>
 
   <div class="kpis" id="kpis"></div>
@@ -281,7 +355,7 @@ canvas#ruler{display:block;width:100%;height:120px}
         <div class="note">
           <p style="margin:0 0 8px">Every cage number here is generated by a model; the shape of the app is the deliverable. The Flyway view is live: it reads the PMC through <code>bridge/pmc_bridge.py</code>.</p>
           <ul>
-            <li><b>Cage receivers.</b> The 24 bars are all 1500 mm, so a position is a bar name plus a distance from that bar's zero end, the way you'd read it off a tape. Positions are configuration you measure once; power comes from the path Fennec already uses, two <code>DataEndpoint</code>s off the VISA load multiplied into a custom endpoint.</li>
+            <li><b>Cage receivers.</b> The 24 bars are all 1500 mm, so a position is a bar name plus a distance from that bar's zero end, the way you'd read it off a tape. Positions are configuration you measure once; power comes from Fennec2's VISA electronic loads (SDL1030X-E, KEL2030), which report it directly with <code>:MEAS:POW?</code>.</li>
 </ul>
         </div>
       </section>
@@ -294,11 +368,16 @@ canvas#ruler{display:block;width:100%;height:120px}
       </section>
       <section class="panel" id="inspPanel"><header><h2>Inspector</h2></header><div id="insp"></div></section>
       <section class="panel" id="moverPanel" hidden><header><h2>Movers</h2></header><div id="mlist"></div></section>
+      <section class="panel" id="rxbPanel" hidden>
+        <header><h2>Receivers</h2><span class="hsub">Saguaro boards</span><div class="sp"></div><span class="hsum" id="rxbCount"></span></header>
+        <div id="rxblist"></div>
+      </section>
       <section class="panel" id="txPanel"><header><h2>Stand &amp; transmitter</h2></header><div id="txBody"></div></section>
     </div>
   </div>
 </div>
 
+<div class="viewpop" id="viewPop" role="dialog" aria-label="View options" hidden></div>
 <div class="ftip" id="ftip" role="tooltip"></div>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 <script>
@@ -313,9 +392,37 @@ var MOVER_MM = {M306:[120,120,10]};        // xBot footprint by type; unknown ty
 var STAND_X = 1150, STAND_Y = -1250;      // stand sits off the south-east corner
 var REDUCED = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
-/* Sequential blue, light -> dark for a light surface: pale = near zero. */
-var RAMP = ["#cde2fb","#b7d3f6","#9ec5f4","#86b6ef","#6da7ec","#5598e7","#3987e5",
-            "#2a78d6","#256abf","#1c5cab","#184f95","#104281","#0d366b"];
+/* Sequential ramps, light -> dark for a light surface: pale = near zero. Blue is the dataviz
+   reference ramp; the others keep its OKLCH lightness and chroma step for step at another
+   hue (checked monotonic, single-hue), so every choice reads the same way. */
+var RAMPS = {
+  blue:  ["#cde2fb","#b7d3f6","#9ec5f4","#86b6ef","#6da7ec","#5598e7","#3987e5","#2a78d6","#256abf","#1c5cab","#184f95","#104281","#0d366b"],
+  teal:  ["#c1e9e8","#a4dddc","#82d2d1","#5dc6c5","#1cbaba","#16aaab","#149a9a","#0f8a8a","#0a7b7b","#086b6b","#055d5d","#044e4e","#044040"],
+  violet:["#e0dbf9","#d0caf4","#c2b9f1","#b3a7eb","#a595e7","#9884e2","#8b70de","#7d62cf","#6f56b9","#614aa5","#543f90","#47347c","#3a2a67"],
+  amber: ["#f4dac5","#edc9aa","#e7b78d","#dfa471","#d89250","#d0802c","#c26f02","#ad6510","#9a590c","#874d09","#754206","#633705","#532d01"]};
+var RAMP = RAMPS.blue;
+var ACCENTS = {blue:["#2f6fdb","#255fc2","#ebf1fc"], teal:["#0f8a8a","#0b7373","#e5f3f3"], violet:["#6a52d6","#5842bb","#efecfb"],
+  amber:["#b8620a","#9b5208","#faf0e4"], graphite:["#3b4150","#2b303b","#eceef2"]};
+var FINISH = {graphite:0x2a2d34, silver:0x9aa0aa, white:0xe9ebef};
+var ACC = ACCENTS.blue[0];
+function rgba(hex, a){ var n = parseInt(hex.slice(1),16); return "rgba("+(n>>16&255)+","+(n>>8&255)+","+(n&255)+","+a+")"; }
+
+/* ---------- view options: what's shown and how it's coloured; kept per viewer ---------- */
+var VIEW_DEFAULT = {kpis:true, fwPanel:true, mvPanel:true, rxPanel:true,
+  tileHeat:true, tileLabels:true, moverPower:true, moverIds:true, axes:true,
+  mPos:true, mLift:true, mErr:true, fwSpark:true, fwTemps:true,
+  cPlots:true, cRuler:true, cNotes:true,
+  accent:"blue", ramp:"blue", finish:"graphite", stage:"light"};
+var VIEW_KEY = "cagePowerMap.view.v1";
+var VIEW = (function(){
+  var v = {}; Object.keys(VIEW_DEFAULT).forEach(function(k){ v[k] = VIEW_DEFAULT[k]; });
+  try {
+    var saved = JSON.parse(localStorage.getItem(VIEW_KEY) || "{}");
+    Object.keys(saved).forEach(function(k){ if (k in v && typeof saved[k] === typeof v[k]) v[k] = saved[k]; });
+  } catch(e){}
+  return v;
+})();
+function saveView(){ try { localStorage.setItem(VIEW_KEY, JSON.stringify(VIEW)); } catch(e){} }
 /* Categorical slots, light-surface steps, assigned in fixed order. */
 var SERIES = ["#2a78d6","#eb6834","#1baf7a","#eda100","#e87ba4","#008300"];
 
@@ -371,12 +478,13 @@ var S = {
          sel:null, tx:{x:0,y:0,z:900}, log:[] },
   /* Flyway is live only: everything here comes from the bridge. */
   fly:{ es:null, bridgeUp:false, connected:false, err:null, pmc:null, source:null, layout:null, xbots:[], hz:0, last:0,
-        tele:null, pw:{}, errHist:{}, lastErr:0 }
+        tele:null, pw:{}, errHist:{}, errAcc:{}, errShown:{}, lastErr:0, rx:[], rxHist:{} }
 };
 /* Bridge: bridge/pmc_bridge.py. Override with index.html?bridge=http://host:port;
    bridge=same means the bridge served this page. */
 var BRIDGE = new URLSearchParams(location.search).get("bridge") || "http://localhost:8765";
 if (BRIDGE === "same") BRIDGE = location.origin;
+var API = BRIDGE + "/api/receivers/";
 BRIDGE += "/events";
 /* Receivers, power and the log exist on the cage only. */
 function cur(){ return S.cage; }
@@ -495,7 +603,7 @@ var barMeshes = [];
 var R = Math.PI/180;
 var statorGrp = new THREE.Group(); SC.fly.add(statorGrp);
 var MAT_EDGE = new THREE.LineBasicMaterial({color:0xaab0ba});
-var MAT_MOVER = new THREE.MeshStandardMaterial({color:0x2a2d34, roughness:.55, metalness:.25});
+var MAT_MOVER = new THREE.MeshStandardMaterial({color:FINISH[VIEW.finish] || FINISH.graphite, roughness:.55, metalness:.25});
 function textSprite(txt, h, color, halo){
   var c = document.createElement("canvas"), g = c.getContext("2d");
   c.width = 256; c.height = 96;
@@ -508,7 +616,7 @@ function textSprite(txt, h, color, halo){
 }
 /* Origin is the outer corner of the flyway in column 0, row 0, as in the PMC.
    Each tile is coloured by its power draw and carries its reading on the surface. */
-var TILE_BASE = 0xd5d8de, tiles = {};
+var TILE_BASE = 0xd5d8de, tiles = {}, axisObjs = [];
 function buildStator(lay){
   statorGrp.children.slice().forEach(function(o){ statorGrp.remove(o); });
   tiles = {};
@@ -526,13 +634,16 @@ function buildStator(lay){
     var lw = T*.84, pl = new THREE.Mesh(new THREE.PlaneGeometry(lw, lw*160/512),
       new THREE.MeshBasicMaterial({map:tex, transparent:true, depthWrite:false}));
     pl.position.set(x, y-T/2+14+lw*80/512, .6); pl.renderOrder = 1; statorGrp.add(pl);
-    tiles[f.id] = {mesh:t, mat:mat, c:c, tex:tex, key:null};
+    pl.visible = VIEW.tileLabels;
+    tiles[f.id] = {mesh:t, mat:mat, c:c, tex:tex, key:null, label:pl};
   });
   var ax = new THREE.BufferGeometry().setFromPoints([new THREE.Vector3(0,0,1), new THREE.Vector3(90,0,1),
     new THREE.Vector3(0,0,1), new THREE.Vector3(0,90,1)]);
-  statorGrp.add(new THREE.LineSegments(ax, new THREE.LineBasicMaterial({color:0x2f6fdb})));
-  var lx = textSprite("X", 34, "#2f6fdb"); lx.position.set(104,-26,6); statorGrp.add(lx);
-  var ly = textSprite("Y", 34, "#2f6fdb"); ly.position.set(-26,104,6); statorGrp.add(ly);
+  var al = new THREE.LineSegments(ax, new THREE.LineBasicMaterial({color:parseInt(ACC.slice(1),16)}));
+  var lx = textSprite("X", 34, ACC); lx.position.set(104,-26,6);
+  var ly = textSprite("Y", 34, ACC); ly.position.set(-26,104,6);
+  axisObjs = [al, lx, ly];
+  axisObjs.forEach(function(o){ o.visible = VIEW.axes; statorGrp.add(o); });
   var cm = CAM.fly, span = Math.max(cols*T, rows*T*2);
   cm.t = [cols*T/2, rows*T/2, 0]; cm.rad = span*.95 + 160; cm.az = -1.3; cm.pol = .88;
   if (S.sys === "fly") placeCam();
@@ -543,7 +654,7 @@ function lumOf(n){ return (.2126*((n>>16)&255) + .7152*((n>>8)&255) + .0722*(n&2
 function paintTiles(){
   var tel = flyTele(), max = pwMax();
   Object.keys(tiles).forEach(function(id){
-    var tl = tiles[id], f = tel[id], col = f ? rampColor(f.w/max) : TILE_BASE;
+    var tl = tiles[id], f = tel[id], col = f && VIEW.tileHeat ? rampColor(f.w/max) : TILE_BASE;
     tl.mat.color.setHex(col);
     var key = f ? f.w.toFixed(1)+"|"+col : "none";
     if (key === tl.key) return;
@@ -568,12 +679,42 @@ function moverMesh(b){
   var d = MOVER_MM[b.kind] || MOVER_MM.M306, m = new THREE.Group();
   var body = new THREE.Mesh(new THREE.BoxGeometry(d[0],d[1],d[2]), MAT_MOVER);
   body.position.z = d[2]/2; m.add(body);
-  var nose = new THREE.Mesh(new THREE.BoxGeometry(6, d[1]*.5, 1.5),       // marks +X so Rz reads
-    new THREE.MeshBasicMaterial({color:0x2f6fdb}));
-  nose.position.set(d[0]/2-9, 0, d[2]+.8); m.add(nose);
-  var lb = textSprite(String(b.id), 44, "#15171c", true); lb.position.set(0, 0, d[2]+70); m.add(lb);
+  var tc = document.createElement("canvas"); tc.width = tc.height = 512;      // the top face, printed
+  var top = new THREE.Mesh(new THREE.PlaneGeometry(d[0], d[1]),
+    new THREE.MeshBasicMaterial({map:new THREE.CanvasTexture(tc), transparent:true, depthWrite:false}));
+  top.material.map.anisotropy = 8; top.position.z = d[2]+.3; top.renderOrder = 1; m.add(top);
+  var lb = textSprite(String(b.id), 44, "#15171c", true); lb.position.set(0, 0, d[2]+70); lb.visible = VIEW.moverIds; m.add(lb);
+  m.userData.idSprite = lb;
+  m.userData.pw = {c:tc, tex:top.material.map, key:null};
   SC.fly.add(m); moverMeshes[b.id] = m;
   return m;
+}
+/* The top face: a blue bar on the +X edge (so Rz reads) and, when a receiver rides on
+   this xBot, its power printed across the face. It turns with the mover. */
+function paintMoverPower(m, r){
+  var P = m.userData.pw; r = VIEW.moverPower ? r : null;
+  var v = r && r.power != null ? r.power : null;
+  var key = (v == null ? (r ? "wait" : "none") : v.toFixed(2))+"|"+ACC+"|"+VIEW.finish;
+  if (key === P.key) return;
+  P.key = key;
+  var g = P.c.getContext("2d"); g.clearRect(0,0,512,512);
+  var light = VIEW.finish !== "graphite", ink = light ? "#15171c" : "#ffffff", ink2 = light ? "rgba(21,23,28,.55)" : "rgba(255,255,255,.62)";
+  g.fillStyle = ACC; g.beginPath();
+  g.roundRect ? g.roundRect(462, 128, 22, 256, 11) : g.rect(462, 128, 22, 256); g.fill();       // +X edge
+  if (r){
+    g.textAlign = "center"; g.textBaseline = "alphabetic";
+    g.fillStyle = ink2; g.font = '500 44px "Geist", sans-serif';
+    g.fillText("Received", 236, 196);
+    g.fillStyle = ink; g.font = '600 150px "Geist", sans-serif';
+    var t = v == null ? "—" : v < 10 ? v.toFixed(2) : v.toFixed(1);
+    g.fillText(t, 236, 340);
+    g.fillStyle = ink2; g.font = '500 56px "Geist", sans-serif';
+    g.fillText("W", 236, 412);
+  }
+  P.tex.needsUpdate = true;
+}
+function rxFor(xbot){
+  return S.fly.rx.filter(function(r){ return r.xbot === xbot; })[0] || null;
 }
 function syncMovers(){
   var seen = {};
@@ -581,6 +722,7 @@ function syncMovers(){
     var m = moverMesh(b); seen[b.id] = true; m.visible = true;
     m.position.set(b.x, b.y, b.z);
     m.rotation.set(b.rx*R, b.ry*R, b.rz*R);
+    paintMoverPower(m, rxFor(b.id));
   });
   Object.keys(moverMeshes).forEach(function(id){ if (!seen[id]) moverMeshes[id].visible = false; });
 }
@@ -625,7 +767,7 @@ function syncScene(){
     var col = rampColor(t);
     m.puck.material.color.setHex(r.muted ? 0xb4b4be : col);
     var sel = c.sel === r.id, hov = S.hover === r.id;
-    m.ring.material.color.setHex(sel ? 0x2f6fdb : hov ? 0x6b7180 : 0xffffff);
+    m.ring.material.color.setHex(sel ? parseInt(ACC.slice(1),16) : hov ? 0x6b7180 : 0xffffff);
     m.ring.scale.setScalar(sel ? 1.14 : 1);
     var show = !r.muted && r.power > pmax()*0.07;
     m.beam.material.opacity = show ? Math.min(.75,.2+t*.7) : 0;
@@ -926,7 +1068,11 @@ function renderKpis(){
       ["Stator power", fl.length ? tot.toFixed(1) : "—", fl.length ? "W" : ""],
       ["Hottest", hot ? hot.v.toFixed(1) : "—", hot ? "°C "+hot.where : ""],
       ["xBots", F.connected ? String(F.xbots.length) : "—", ""],
-      ["Poll rate", F.hz ? String(F.hz) : "—", F.hz ? "Hz" : ""]];
+      (function(){
+        var on = F.rx.filter(function(r){ return r.xbot != null && r.power != null; });
+        var sum = on.reduce(function(a,r){ return a+r.power; }, 0);
+        return ["Received", on.length ? sum.toFixed(2) : "—", on.length ? "W from "+on.length+" receiver"+(on.length>1?"s":"") : ""];
+      })()];
   } else {
     var tot = c.rx.reduce(function(a,r){return a+r.power;},0);
     var linked = c.rx.filter(function(r){return !r.muted && r.power>=linkedAt();}).length;
@@ -1047,8 +1193,84 @@ function renderCsv(){
   if (!n) rows.push("Waiting for samples");
   document.getElementById("csvOut").textContent = rows.join("\n");
 }
-document.getElementById("rampBar").style.background = "linear-gradient(90deg,"+RAMP.join(",")+")";
-document.getElementById("flyRamp").style.background = "linear-gradient(90deg,"+RAMP.join(",")+")";
+/* ---------- view options: apply ---------- */
+var HIDE_KEYS = ["kpis","fwPanel","mvPanel","rxPanel","mPos","mLift","mErr","fwSpark","fwTemps","cPlots","cRuler","cNotes"];
+function applyView(){
+  var root = document.documentElement;
+  HIDE_KEYS.forEach(function(k){ root.toggleAttribute("data-hide-"+k.toLowerCase(), !VIEW[k]); });
+  root.setAttribute("data-stage", VIEW.stage);
+  var a = ACCENTS[VIEW.accent] || ACCENTS.blue; ACC = a[0];
+  root.style.setProperty("--accent", a[0]); root.style.setProperty("--accent-hover", a[1]); root.style.setProperty("--accent-soft", a[2]);
+  RAMP = RAMPS[VIEW.ramp] || RAMPS.blue;
+  var grad = "linear-gradient(90deg,"+RAMP.join(",")+")";
+  document.getElementById("rampBar").style.background = grad;
+  document.getElementById("flyRamp").style.background = grad;
+  MAT_MOVER.color.setHex(FINISH[VIEW.finish] || FINISH.graphite);
+  Object.keys(tiles).forEach(function(id){ tiles[id].key = null; tiles[id].label.visible = VIEW.tileLabels; });
+  axisObjs.forEach(function(o){ o.visible = VIEW.axes; });
+  if (axisObjs[0] && axisObjs[0].material.color.getHex() !== parseInt(ACC.slice(1),16)) buildStator(S.fly.layout);
+  Object.keys(moverMeshes).forEach(function(id){
+    var m = moverMeshes[id]; m.userData.idSprite.visible = VIEW.moverIds; m.userData.pw.key = null; });
+  paintTiles();
+  document.querySelectorAll("canvas.spark").forEach(drawSpark);
+  if (S.sys === "cage"){ drawRuler(); if (S.tab === "bars") drawBars(); }
+}
+
+/* ---------- view options: the panel ---------- */
+var VIEW_GROUPS = [
+  {sys:"fly", title:"Sections", rows:[["kpis","Readings strip"],["fwPanel","Flyways"],["mvPanel","Movers"],["rxPanel","Receivers"]]},
+  {sys:"fly", title:"3D view", rows:[["tileHeat","Colour tiles by power"],["tileLabels","Power on tiles"],
+    ["moverPower","Received power on xBots"],["moverIds","xBot numbers"],["axes","X / Y axes"]]},
+  {sys:"fly", title:"Details", rows:[["mPos","Mover position"],["mLift","Lift"],["mErr","Tracking error"],
+    ["fwSpark","Flyway power trends"],["fwTemps","Flyway temperatures"]]},
+  {sys:"cage", title:"Sections", rows:[["kpis","Readings strip"],["cPlots","Charts"],["cRuler","Bar position"],["cNotes","Wiring notes"]]}];
+var NAMES = {blue:"Blue", teal:"Teal", violet:"Violet", amber:"Amber", graphite:"Graphite", silver:"Silver", white:"White",
+  light:"Light", soft:"Soft", dark:"Dark"};
+var vpEl = document.getElementById("viewPop"), vpBtn = document.getElementById("btnView");
+function renderViewPop(){
+  var h = '<div class="vp-hd"><h3>View</h3><span class="hsub">Saved in this browser</span>'+
+    '<button class="vp-reset" data-reset>Reset</button></div>';
+  VIEW_GROUPS.filter(function(g){ return g.sys === S.sys; }).forEach(function(g){
+    h += '<div class="vp-grp"><h4>'+g.title+'</h4>'+g.rows.map(function(r){
+      return '<label class="vp-row"><span>'+r[1]+'</span><button class="tgl" role="switch" data-k="'+r[0]+
+        '" aria-checked="'+VIEW[r[0]]+'" aria-label="'+r[1]+'"></button></label>'; }).join("")+'</div>';
+  });
+  function swatches(key, opts, cls, fill, label){
+    return '<div class="vp-lbl">'+label+'<em>'+NAMES[VIEW[key]]+'</em></div><div class="vp-sws" role="radiogroup" aria-label="'+label+'">'+
+      opts.map(function(o){ return '<button class="'+cls+'" role="radio" data-k="'+key+'" data-v="'+o+'" aria-checked="'+(VIEW[key]===o)+
+        '" aria-label="'+NAMES[o]+'" title="'+NAMES[o]+'" style="--c:'+fill(o)+'"></button>'; }).join("")+'</div>';
+  }
+  function seg(key, opts, label){
+    return '<div class="vp-lbl">'+label+'</div><div class="tabs vp-seg" role="radiogroup" aria-label="'+label+'">'+
+      opts.map(function(o){ return '<button class="tab" role="radio" data-k="'+key+'" data-v="'+o+'" aria-selected="'+(VIEW[key]===o)+
+        '" aria-checked="'+(VIEW[key]===o)+'">'+NAMES[o]+'</button>'; }).join("")+'</div>';
+  }
+  h += '<div class="vp-grp"><h4>Colours</h4>'+
+    swatches("accent", Object.keys(ACCENTS), "swc", function(o){ return ACCENTS[o][0]; }, "Accent")+
+    swatches("ramp", Object.keys(RAMPS), "swr", function(o){ return "linear-gradient(90deg,"+RAMPS[o].join(",")+")"; }, "Power scale")+
+    (S.sys === "fly" ? seg("finish", ["graphite","silver","white"], "xBot finish") : "")+
+    seg("stage", ["light","soft","dark"], "3D background")+'</div>';
+  vpEl.innerHTML = h;
+}
+function openView(open){
+  vpEl.hidden = !open; vpBtn.setAttribute("aria-expanded", open ? "true" : "false");
+  if (open){ renderViewPop(); var f = vpEl.querySelector(".tgl, [role=radio]"); if (f) f.focus(); }
+}
+vpBtn.onclick = function(e){ e.stopPropagation(); openView(vpEl.hidden); };
+vpEl.addEventListener("click", function(e){
+  e.stopPropagation();
+  var t = e.target.closest("[data-k], [data-reset]"); if (!t) return;
+  e.preventDefault();
+  if (t.hasAttribute("data-reset")) Object.keys(VIEW_DEFAULT).forEach(function(k){ VIEW[k] = VIEW_DEFAULT[k]; });
+  else if (t.hasAttribute("data-v")) VIEW[t.dataset.k] = t.dataset.v;
+  else VIEW[t.dataset.k] = !VIEW[t.dataset.k];
+  var focusKey = t.dataset.k, focusVal = t.dataset.v;
+  saveView(); applyView(); renderViewPop();
+  var back = vpEl.querySelector(focusKey ? '[data-k="'+focusKey+'"]'+(focusVal ? '[data-v="'+focusVal+'"]' : '') : "[data-reset]");
+  if (back) back.focus();
+});
+document.addEventListener("click", function(){ if (!vpEl.hidden) openView(false); });
+document.addEventListener("keydown", function(e){ if (e.key === "Escape" && !vpEl.hidden){ openView(false); vpBtn.focus(); } });
 
 /* ===================== flyway: live from the bridge ===================== */
 function connectFly(){
@@ -1066,13 +1288,25 @@ function connectFly(){
       }
     } else if (m.type === "pose"){
       F.xbots = m.xbots; F.hz = m.hz; F.last = performance.now(); F.connected = true;
-      if (F.last - F.lastErr >= 200){                       // tracking-error history at 5 Hz
+      /* Tracking error: every pose counts, but it's shown as the mean over ERR_WINDOW_MS,
+         so the number and its trend move at a readable pace instead of flickering at 20 Hz. */
+      F.xbots.forEach(function(b){
+        if (!b.err) return;
+        var a = F.errAcc[b.id] = F.errAcc[b.id] || {n:0, x:0, y:0, z:0, m:0};
+        a.n++; a.x += b.err[0]; a.y += b.err[1]; a.z += b.err[2]; a.m += Math.hypot(b.err[0], b.err[1], b.err[2]);
+      });
+      if (F.last - F.lastErr >= ERR_WINDOW_MS){
         F.lastErr = F.last;
-        F.xbots.forEach(function(b){
-          if (!b.err) return;
-          (F.errHist[b.id] = F.errHist[b.id] || mkRing(150)).push(Math.hypot(b.err[0], b.err[1], b.err[2]));
+        Object.keys(F.errAcc).forEach(function(id){
+          var a = F.errAcc[id]; if (!a.n) return;
+          var e = F.errShown[id] = {m:a.m/a.n, x:a.x/a.n, y:a.y/a.n, z:a.z/a.n};
+          (F.errHist[id] = F.errHist[id] || mkRing(ERR_POINTS)).push(e.m);
+          a.n = a.x = a.y = a.z = a.m = 0;
         });
       }
+    } else if (m.type === "receivers"){
+      F.rx = m.boards;
+      F.rx.forEach(function(r){ if (r.power != null) (F.rxHist[r.mac] = F.rxHist[r.mac] || mkRing(300)).push(r.power); });
     } else if (m.type === "telemetry"){
       F.tele = m;
       m.flyways.forEach(function(f){ (F.pw[f.id] = F.pw[f.id] || mkRing(120)).push(f.w); });
@@ -1118,12 +1352,12 @@ function drawSpark(c){
   if (!n) return;
   var X = function(j){ return R - (n-1-j)*(R-L)/(d.cap-1); }, Y = function(v){ return B - Math.min(1, v/d.max)*(B-T); };
   g.beginPath(); vals.forEach(function(v,j){ j ? g.lineTo(X(j),Y(v)) : g.moveTo(X(j),Y(v)); });
-  g.lineTo(X(n-1),B); g.lineTo(X(0),B); g.closePath(); g.fillStyle = "rgba(47,111,219,.10)"; g.fill();
+  g.lineTo(X(n-1),B); g.lineTo(X(0),B); g.closePath(); g.fillStyle = rgba(ACC, .10); g.fill();
   g.beginPath(); vals.forEach(function(v,j){ j ? g.lineTo(X(j),Y(v)) : g.moveTo(X(j),Y(v)); });
-  g.strokeStyle = "#2f6fdb"; g.lineWidth = 2; g.lineJoin = g.lineCap = "round"; g.stroke();
+  g.strokeStyle = ACC; g.lineWidth = 2; g.lineJoin = g.lineCap = "round"; g.stroke();
   var j = c._hover != null ? Math.max(0, Math.min(n-1, c._hover)) : n-1;
   if (c._hover != null){ g.strokeStyle = "#cfd3da"; g.lineWidth = 1; g.beginPath(); g.moveTo(X(j)+.5,T-4); g.lineTo(X(j)+.5,B); g.stroke(); }
-  g.beginPath(); g.arc(X(j), Y(vals[j]), 4, 0, 7); g.fillStyle = "#2f6fdb"; g.fill();
+  g.beginPath(); g.arc(X(j), Y(vals[j]), 4, 0, 7); g.fillStyle = ACC; g.fill();
   g.strokeStyle = "#ffffff"; g.lineWidth = 2; g.stroke();
   c._X = X; c._n = n;
 }
@@ -1194,12 +1428,105 @@ function renderFlyways(){
   document.getElementById("flyMax").textContent = max+" W";
 }
 
+/* ---------- receivers (Saguaro boards) ---------- */
+var RXSTATE = {idle:["s-off","Not connected"], connecting:["s-warn","Connecting"], handshake:["s-warn","Connecting"],
+  streaming:["s-good","Streaming"], error:["s-crit","Can't connect"]};
+function rxName(r){ return r.label || r.name || r.mac; }
+function rxPost(mac, action, body){
+  return fetch(API + encodeURIComponent(mac) + (action ? "/"+action : ""), {method:"POST",
+    headers:{"Content-Type":"text/plain"}, body: body ? JSON.stringify(body) : ""})       // text/plain: no preflight
+    .then(function(res){ if (!res.ok) throw new Error(res.status); })
+    .catch(function(){ rxFlash(mac, "Couldn't reach the bridge. Is it running?"); });
+}
+var rxCards = {}, rxErr = {};
+function rxFlash(mac, msg){ rxErr[mac] = {msg:msg, t:performance.now()}; }
+function renderReceivers(){
+  var el = document.getElementById("rxblist"), F = S.fly, list = F.rx;
+  var live = list.filter(function(r){ return r.state === "streaming"; }).length;
+  document.getElementById("rxbCount").innerHTML = list.length ? "<b>"+live+"</b> of "+list.length+" streaming" : "";
+  if (!list.length){
+    rxCards = {};
+    el.innerHTML = F.bridgeUp
+      ? '<div class="empty"><b>No receivers found</b>Saguaro boards announce themselves on 224.0.0.251:4210. '+
+        'Power one on, on the same network as this PC, and it appears here.</div>'
+      : '<div class="empty"><b>Bridge offline</b>Receivers are found by the bridge.</div>';
+    return;
+  }
+  if (el.querySelector(".empty")) el.innerHTML = "";
+  var macs = list.map(function(r){ return r.mac; });
+  Object.keys(rxCards).forEach(function(m){ if (macs.indexOf(m) < 0){ rxCards[m].el.remove(); delete rxCards[m]; } });
+  list.forEach(function(r){
+    var k = rxCards[r.mac];
+    if (!k){
+      var d = document.createElement("div"); d.className = "rxb";
+      d.innerHTML = '<div class="rxb-hd"><span class="rxb-nm"></span><span class="state"></span>'+
+        '<button class="btn sm act"></button></div><div class="rxb-id"></div>'+
+        '<div class="rxb-pw"><div class="v"><span class="n">—</span><small>W</small></div>'+
+        '<canvas class="spark" aria-label="Received power over the last 60 seconds"></canvas></div>'+
+        '<div class="rxb-sel"><div><label>Rides on</label><select class="sx" aria-label="Mover this receiver rides on"></select></div>'+
+        '<div><label>Power from</label><select class="se" aria-label="Endpoint that carries power"></select></div></div>'+
+        '<div class="rxb-eps"></div><div class="rxb-err" hidden></div>';
+      el.appendChild(d);
+      k = rxCards[r.mac] = {el:d, nm:d.querySelector(".rxb-nm"), st:d.querySelector(".state"), act:d.querySelector(".act"),
+        id:d.querySelector(".rxb-id"), pw:d.querySelector(".rxb-pw"), n:d.querySelector(".n"), spark:d.querySelector(".spark"),
+        sx:d.querySelector(".sx"), se:d.querySelector(".se"), eps:d.querySelector(".rxb-eps"), err:d.querySelector(".rxb-err"),
+        r:r, sxKey:null, seKey:null};
+      sparkHover(k.spark);
+      k.act.onclick = function(){
+        var on = ["streaming","connecting","handshake"].indexOf(k.r.state) >= 0;
+        rxPost(k.r.mac, on ? "disconnect" : "connect");
+      };
+      k.sx.onchange = function(){ rxPost(k.r.mac, null, {xbot: this.value === "" ? null : +this.value}); };
+      k.se.onchange = function(){ rxPost(k.r.mac, null, {endpoint: this.value || null}); };
+    }
+    k.r = r;
+    var st = RXSTATE[r.state] || ["s-off", r.state];
+    k.nm.textContent = rxName(r);
+    k.st.className = "state "+st[0]; k.st.innerHTML = '<span class="d"></span>'+st[1];
+    k.st.title = r.error || "";
+    k.act.textContent = r.state === "idle" ? "Connect" : "Disconnect";
+    k.id.textContent = [rxName(r) !== r.mac && r.mac, r.ip && r.ip+":"+r.port, r.fw && "fw "+r.fw].filter(Boolean).join(" · ");
+    k.pw.hidden = r.state !== "streaming";
+    k.n.textContent = r.power != null ? r.power.toFixed(2) : "—";
+    var h = S.fly.rxHist[r.mac], hv = h ? h.vals() : [];
+    if (!k.pw.hidden) setSpark(k.spark, hv, Math.max(1, niceCeil(Math.max.apply(null, hv.concat([0]))*1.1, 1)), 300, .2,
+      function(v){ return v.toFixed(2)+" W"; });
+    // selects: rebuild only when their options change, so an open dropdown isn't reset
+    var bots = S.fly.xbots.map(function(b){ return b.id; });
+    var sxKey = bots.join(",")+"|"+r.xbot;
+    if (sxKey !== k.sxKey){
+      k.sxKey = sxKey;
+      var opts = bots.slice(); if (r.xbot != null && opts.indexOf(r.xbot) < 0) opts.push(r.xbot);
+      k.sx.innerHTML = '<option value="">Not assigned</option>'+opts.map(function(id){
+        return '<option value="'+id+'">xBot '+id+(bots.indexOf(id) < 0 ? " (not on flyway)" : "")+'</option>'; }).join("");
+      k.sx.value = r.xbot == null ? "" : String(r.xbot);
+    }
+    var nums = r.endpoints.filter(function(e){ return e.type === "float" || e.type === "int"; });
+    var seKey = nums.map(function(e){ return e.name; }).join(",")+"|"+r.power_ep;
+    if (seKey !== k.seKey){
+      k.seKey = seKey;
+      var names = nums.map(function(e){ return e.name; });
+      if (r.power_ep && names.indexOf(r.power_ep) < 0) names.push(r.power_ep);
+      k.se.innerHTML = '<option value="">'+(names.length ? "Choose…" : "Connect to list")+'</option>'+
+        names.map(function(n){ return '<option>'+esc(n)+'</option>'; }).join("");
+      k.se.value = r.power_ep || "";
+    }
+    k.eps.innerHTML = r.endpoints.filter(function(e){ return e.name !== r.power_ep; }).map(function(e){
+      var v = e.value == null ? "—" : typeof e.value === "number" ? (Math.abs(e.value) >= 100 ? e.value.toFixed(1) : e.value.toFixed(3))
+        : typeof e.value === "boolean" ? (e.value ? "on" : "off") : esc(String(e.value));
+      return '<span>'+esc(e.name)+' <b>'+v+'</b></span>'; }).join("");
+    var fl = rxErr[r.mac], msg = fl && performance.now() - fl.t < 6000 ? fl.msg : (r.state === "error" ? r.error : "");
+    k.err.hidden = !msg; k.err.textContent = msg || "";
+  });
+}
+
 var PMC_STATE = {PMC_FULLCTRL:"Full control", PMC_INTELLIGENTCTRL:"Intelligent control", PMC_INACTIVE:"Inactive",
   PMC_ACTIVATING:"Activating", PMC_BOOTING:"Booting", PMC_DISCOVERY:"Discovery", PMC_SERVICE:"Service mode"};
 var XSTATE = {XBOT_IDLE:["s-good","Idle"], XBOT_MOTION:["s-good","Moving"], XBOT_LANDED:["s-off","Landed"],
   XBOT_DISABLED:["s-off","Disabled"], XBOT_DISCOVERING:["s-warn","Discovering"]};
 function kindLabel(k){ var m = /^M(\d)(\d\d)(.*)$/.exec(k||""); return m ? "M"+m[1]+"-"+m[2]+m[3] : (k||""); }
 function sgn(v, d){ return (v < 0 ? "−" : "")+Math.abs(v).toFixed(d); }   // true minus sign
+var ERR_WINDOW_MS = 500, ERR_POINTS = 60;      // tracking error: 0.5 s means, 30 s of trend
 var moverCards = {};
 function renderMovers(){
   var el = document.getElementById("mlist"), F = S.fly;
@@ -1221,7 +1548,10 @@ function renderMovers(){
     if (!k){
       var d = document.createElement("div"); d.className = "mover";
       d.innerHTML = '<div class="hd"><span class="nm">xBot '+b.id+'</span><span class="kind"></span>'+
-        '<span class="state"></span></div><div class="coords"></div>'+
+        '<span class="state"></span></div><div class="mrx" hidden><div class="k">Received power · <b class="rxn"></b></div>'+
+        '<div class="mrx-row"><div class="v"><span class="rxv">—</span><small>W</small></div>'+
+        '<canvas class="spark" aria-label="Received power over the last 60 seconds"></canvas></div></div>'+
+        '<div class="coords"></div>'+
         '<div class="mstats"><div class="mstat"><div class="k">Lift</div><div class="v"><span class="fz">—</span><small>N</small></div>'+
         '<div class="s mass"></div><div class="s fxy"></div></div>'+
         '<div class="mstat"><div class="k">Tracking error</div><div class="v"><span class="e">—</span><small>µm</small></div>'+
@@ -1229,8 +1559,9 @@ function renderMovers(){
       el.appendChild(d);
       k = moverCards[b.id] = {el:d, kind:d.querySelector(".kind"), st:d.querySelector(".state"), xy:d.querySelector(".coords"),
         fz:d.querySelector(".fz"), mass:d.querySelector(".mass"), fxy:d.querySelector(".fxy"),
-        e:d.querySelector(".e"), spark:d.querySelector(".spark"), exyz:d.querySelector(".exyz")};
-      sparkHover(k.spark);
+        e:d.querySelector(".e"), spark:d.querySelector(".mstats .spark"), exyz:d.querySelector(".exyz"),
+        mrx:d.querySelector(".mrx"), rxn:d.querySelector(".rxn"), rxv:d.querySelector(".rxv"), rxs:d.querySelector(".mrx .spark")};
+      sparkHover(k.spark); sparkHover(k.rxs);
     }
     var st = XSTATE[b.state] || ["s-crit", b.state.replace(/^XBOT_/,"").toLowerCase()];
     function v(n, u, dp){ return '<span>'+sgn(+n.toFixed(dp) || 0, dp)+'<i>'+u+'</i></span>'; }   // no "-0.00"
@@ -1238,21 +1569,31 @@ function renderMovers(){
     k.st.className = "state "+st[0]; k.st.innerHTML = '<span class="d"></span>'+esc(st[1]);
     k.xy.innerHTML = '<b>X</b>'+v(b.x," mm",1)+'<b>Rx</b>'+v(b.rx,"°",2)+'<b>Y</b>'+v(b.y," mm",1)+
       '<b>Ry</b>'+v(b.ry,"°",2)+'<b>Z</b>'+v(b.z," mm",2)+'<b>Rz</b>'+v(b.rz,"°",2);
+    var rx = rxFor(b.id);
+    k.mrx.hidden = !rx;
+    if (rx){
+      k.rxn.textContent = rxName(rx) + (rx.state === "streaming" ? "" : " · "+(RXSTATE[rx.state] || ["",""])[1].toLowerCase());
+      k.rxv.textContent = rx.power != null ? rx.power.toFixed(2) : "—";
+      var rh = S.fly.rxHist[rx.mac], rhv = rh ? rh.vals() : [];
+      setSpark(k.rxs, rhv, Math.max(1, niceCeil(Math.max.apply(null, rhv.concat([0]))*1.1, 1)), 300, .2,
+        function(x){ return x.toFixed(2)+" W"; });
+    }
     var fo = force[b.id];
     k.fz.textContent = fo ? fo[2].toFixed(2) : "—";
     k.mass.textContent = fo ? "≈ "+(fo[2]/9.81).toFixed(2)+" kg held" : "Waiting for force";
     k.fxy.textContent = fo ? "Fx "+sgn(fo[0],2)+"  Fy "+sgn(fo[1],2) : "";
-    var em = b.err ? Math.hypot(b.err[0], b.err[1], b.err[2]) : null, h = F.errHist[b.id], hv = h ? h.vals() : [];
-    k.e.textContent = em === null ? "—" : em < 10 ? em.toFixed(2) : em.toFixed(1);
-    k.exyz.textContent = b.err ? "X "+sgn(b.err[0],1)+" Y "+sgn(b.err[1],1)+" Z "+sgn(b.err[2],1) : "";
-    setSpark(k.spark, hv, Math.max(2, niceCeil(Math.max.apply(null, hv.concat([0]))*1.1, 1)), 150, .2,
-      function(x){ return x.toFixed(2)+" µm"; });
+    var es = F.errShown[b.id], h = F.errHist[b.id], hv = h ? h.vals() : [];
+    k.e.textContent = !es ? "—" : es.m < 10 ? es.m.toFixed(2) : es.m.toFixed(1);
+    k.exyz.textContent = es ? "X "+sgn(es.x,1)+" Y "+sgn(es.y,1)+" Z "+sgn(es.z,1) : "";
+    setSpark(k.spark, hv, Math.max(2, niceCeil(Math.max.apply(null, hv.concat([0]))*1.1, 1)), ERR_POINTS, ERR_WINDOW_MS/1000,
+      function(x){ return x.toFixed(2)+" µm, "+(ERR_WINDOW_MS/1000)+" s mean"; });
   });
 }
 
 /* ===================== switching ===================== */
 function switchSystem(sys){
   S.sys = sys; S.hover = null; S.dragging = false;
+  if (!vpEl.hidden) renderViewPop();
   document.querySelectorAll(".sysbtn").forEach(function(b){
     b.setAttribute("aria-selected", b.dataset.sys===sys?"true":"false"); });
   var isCage = sys === "cage";
@@ -1261,6 +1602,7 @@ function switchSystem(sys){
     document.getElementById(id).hidden = !isCage; });
   document.getElementById("moverPanel").hidden = isCage;
   document.getElementById("flywayPanel").hidden = isCage;
+  document.getElementById("rxbPanel").hidden = isCage;
   document.getElementById("flyLegend").hidden = isCage;
   document.getElementById("hint").textContent = isCage
     ? "Drag to orbit · scroll to zoom · click a receiver to select · click any bar to move it there"
@@ -1317,7 +1659,7 @@ function frame(ts){
   if (S.sys === "fly"){
     syncMovers();
     renderer.render(SC.fly, CAM.fly.obj);
-    if (ts-lastUi > 120){ renderKpis(); renderFlyBadge(); renderMovers(); renderFlyways(); lastUi = ts; }
+    if (ts-lastUi > 120){ renderKpis(); renderFlyBadge(); renderMovers(); renderFlyways(); renderReceivers(); lastUi = ts; }
     return;
   }
   var c = cur();
@@ -1361,6 +1703,7 @@ function frame(ts){
   }
 }
 
+applyView();
 switchSystem("cage"); resize(); showTab("bars");
 if (new URLSearchParams(location.search).get("view") === "fly") switchSystem("fly");
 glc.style.cursor = "grab";

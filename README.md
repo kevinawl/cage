@@ -83,13 +83,65 @@ badge says whether the bridge and PMC are up; hover it for the reason.
 - Setup: Python 3.12 venv in `.venv`, with `pmclib` installed from PMI's
   `pmclib-117.15.01-py3.zip` (brings `pythonnet` and `numpy`). Bridge itself is stdlib.
 
+## View options
+
+**View** in the header opens a panel of switches and colours, saved per browser
+(`localStorage`; the page works the same if storage is blocked).
+
+- **Flyway:** show or hide the readings strip and the Flyways, Movers and Receivers
+  panels; in 3D, tile power colour, power labels on tiles, received power on the
+  xBots, xBot numbers and the X/Y axes; mover position, lift, tracking error, and the
+  flyway trends and temperatures.
+- **Cage:** readings strip, charts, bar position ruler, wiring notes.
+- **Colours:** accent, power scale, xBot finish, 3D background. The power scales
+  are single-hue: blue is the dataviz reference ramp, teal, violet and amber keep its
+  lightness and chroma step for step at another hue.
+
+## Receivers on the movers (Saguaro)
+
+A Saguaro board riding on an xBot reports its own measurements over WiFi. The bridge
+finds and reads them the way Fennec2 does (`bridge/saguaro.py`, protocol taken from
+Fennec2 v1.7.1 `Devices/MCU/McuDevice.cs` and `Communication/protobuf/fennec2.proto`):
+
+- **Detect.** Boards multicast `<port>-SAGUARO-<MAC>` to `224.0.0.251:4210` about once a
+  second; each shows up in the Flyway view's Receivers panel, not yet connected.
+- **Only what's reachable.** A board is listed while it has announced in the last 3.5 s
+  or is streaming to the bridge; anything else drops out within seconds. Assignments
+  are kept, so an assigned board reappears and reconnects by itself when it's back.
+  (No test connections are made to check: a board may accept one client only.)
+- **Connect.** TCP to the board, then Fennec2's handshake: `fennec2` → name and firmware,
+  `ep-man list` → its endpoints, `print protobuf` + `s 1` → telemetry (protobuf frames
+  split on `AA 55 0D 0A`), `ping` keep-alive, reconnect after 4 s of silence. The
+  bridge only connects boards you connect or assign, so it won't take a board that
+  Fennec2 is using by accident.
+- **Assign.** *Rides on* picks the xBot; *Power from* picks the endpoint that carries
+  watts (guessed from names like `P_out`; switched on with `ep-man index` if the
+  board had it off). Saved in `bridge/receivers.json` by MAC, so assigned boards
+  reconnect by themselves after a restart.
+- **Monitor.** The mover's card leads with its received power and a 60 s trend, the
+  3D view labels the mover with it, and the readings strip totals it.
+
+No board on hand? `bridge\fake_saguaro.py` runs fake boards (MACs `02:00:00:5A:67:xx`, a
+locally administered range no real board uses) that speak the same
+protocol over real sockets:
+
+```powershell
+.\.venv\Scripts\python.exe bridge\fake_saguaro.py        # terminal 1: two fake boards
+.\.venv\Scripts\python.exe bridge\pmc_bridge.py          # terminal 2: as usual
+```
+
+For tests, `--receivers-file PATH` keeps assignments out of the real `bridge/receivers.json`.
+
+The protobuf decoding is hand-written (stdlib only) and was checked against the official
+protobuf library compiled from Fennec2's `.proto`, both directions.
+
 ## Replacing the simulation
 
 Two data sources, both already understood:
 
 | What | Where it comes from |
 |---|---|
-| Receiver power | The path Fennec already uses — two `DataEndpoint`s off the VISA load, multiplied into a custom endpoint. No new measurement code. |
+| Receiver power | Flyway: Saguaro boards, live now (see below). Cage: Fennec2's VISA loads (SDL1030X-E, KEL2030) answer `:MEAS:POW?` directly; no V×I needed. |
 | Mover pose | `PMCLIB.dll`, referenced directly from C#. See [docs/PMI-PMCLIB.md](docs/PMI-PMCLIB.md). |
 
 Cage receiver positions are configuration you measure once and type in. The rig does
