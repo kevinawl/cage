@@ -10,35 +10,41 @@ Spec: [Graph Automation Feature](https://awle.atlassian.net/wiki/spaces/~7120206
 
 Open `index.html` in a browser. No build, no server, no install. Everything is in
 that one file; the only external dependency is three.js from cdnjs, so the machine
-needs a network connection the first time.
+needs a network connection the first time. Both views read live data from the
+bridge (below); without it they draw the rig and say the bridge is offline.
 
 A published copy lives at <https://claude.ai/artifact/NDhhLFdDeR58VcntYFEFBf>
 (private — share it from the page's Share menu before sending the link on).
 
-## The cage data is simulated
-
-Nothing here talks to hardware. The power numbers come from a coupling model
-(distance falloff × coil alignment) that behaves plausibly and makes the UI
-responsive. **It is not a field solver — do not read absolute watts off it.**
-
-The page says so in a badge. Keep that badge until real data is wired in.
-
 ## The two rigs
 
-They are separate setups and the tool keeps them separate — own geometry, own
-receivers, own log, own CSV shape. Switch between them in the header.
+They are separate setups and the tool keeps them separate: own geometry, own view,
+own readings. Switch between them in the header. The Saguaro receivers are shared:
+a board rides on an xBot or sits at a cage point, one or the other.
 
 ### Cage
 
-24 structural members, each exactly 1500 mm, forming a 2×2 lattice on every face.
-Nothing crosses the working volume. Receivers clamp **to the bars**: a position is a
-bar name plus a distance from that bar's zero end, so the number in the app is the
-number you get with a tape on the real frame. See [docs/CAGE-GEOMETRY.md](docs/CAGE-GEOMETRY.md).
-
+A 3 m cube with a 2×2 lattice on every face: 48 bars, each exactly 1.5 m (one span
+between two joints). Nothing crosses the working volume. See [docs/CAGE-GEOMETRY.md](docs/CAGE-GEOMETRY.md).
 A stand off the south-east corner carries the PSU and the TX electronics.
 
-Four ways to set a position, all equivalent: type the exact mm, drag the slider,
-click the bar ruler, or click a bar in the 3D view. Snap is selectable from 1 to 50 mm.
+Live only, like the flyway: nothing is simulated. The view is drawn to scale (one
+scene unit is one millimetre) on a 250 mm floor grid, with rulers along X (south side),
+Y (west side) and Z (north-west post), each 3 m with ticks every 250 mm, the joints
+marked and every 1.5 m bar span labelled, and the X/Y/Z axes at the origin.
+
+- **Points** are the positions receivers are measured at. Origin at the centre of the
+  cage floor; X west → east, Y south → north, Z up, in mm. **Add** makes one at the
+  cage centre (0, 0, 1500) with the cursor in X, ready to type. X and Y run
+  −1500 to 1500 and Z 0 to 3000. Select a point to edit its name
+  and X/Y/Z, or click any bar in the view to put it there (snapped to 10 mm), or drag
+  it along the bars. When a point is on a bar the editor says which one and how far
+  from its zero end, so it can be checked with a tape. Points are kept by the bridge
+  in `bridge/cage_points.json`.
+- **Receivers** are assigned to a point from the point's editor or from the board's
+  *At point* select. The point turns the power-scale colour of its power reading. Its
+  3D label shows W, V and A, its row and editor show power, voltage and current with a
+  60 s trend each, and the readings strip totals the power and names the strongest point.
 
 ### Flyway
 
@@ -92,19 +98,40 @@ badge says whether the bridge and PMC are up; hover it for the reason.
   panels; in 3D, tile power colour, power labels on tiles, received power on the
   xBots, xBot numbers and the X/Y axes; mover position, lift, tracking error, and the
   flyway trends and temperatures.
-- **Cage:** readings strip, charts, bar position ruler, wiring notes.
+- **Cage:** readings strip, Points and Receivers panels; in 3D, rulers and axes,
+  point labels, drop lines from each point to the floor.
 - **Colours:** accent, power scale, xBot finish, 3D background. The power scales
   are single-hue: blue is the dataviz reference ramp, teal, violet and amber keep its
   lightness and chroma step for step at another hue.
 
-## Receivers on the movers (Saguaro)
+## Plot data
 
-A Saguaro board riding on an xBot reports its own measurements over WiFi. The bridge
+**Plot data** in the header records every reading, with the position it was taken at,
+while a receiver streams at a cage point or on an xBot (5 Hz: time, x/y/z, W, V, A, and
+stator W on the flyway). It plots them four ways, filtered by reading, time range and
+receiver:
+
+- **Heat map:** the cage from the top, front and side (the flyway from the top), each
+  cell the mean of the readings inside it; *Show spots in 3D* colours every measured
+  spot in the 3D view.
+- **Locations:** one sortable row per spot (10 mm) per receiver: means, range, count,
+  time there.
+- **Over time:** a line per receiver, with a crosshair naming the point each reading
+  came from.
+- **vs position:** each spot's mean against distance from a chosen point (add the TX as
+  a point) or against X, Y or Z.
+
+**Export CSV** writes `time, receiver, mac, rig, place, x_mm, y_mm, z_mm, power_W,
+voltage_V, current_A, stator_W`, one row per reading.
+
+## Receivers (Saguaro)
+
+A Saguaro board, riding on an xBot or clamped at a cage point, reports its own measurements over WiFi. The bridge
 finds and reads them the way Fennec2 does (`bridge/saguaro.py`, protocol taken from
 Fennec2 v1.7.1 `Devices/MCU/McuDevice.cs` and `Communication/protobuf/fennec2.proto`):
 
 - **Detect.** Boards multicast `<port>-SAGUARO-<MAC>` to `224.0.0.251:4210` about once a
-  second; each shows up in the Flyway view's Receivers panel, not yet connected.
+  second; each shows up in the Receivers panel, not yet connected.
 - **Only what's reachable.** A board is listed while it has announced in the last 3.5 s
   or is streaming to the bridge; anything else drops out within seconds. Assignments
   are kept, so an assigned board reappears and reconnects by itself when it's back.
@@ -114,12 +141,15 @@ Fennec2 v1.7.1 `Devices/MCU/McuDevice.cs` and `Communication/protobuf/fennec2.pr
   split on `AA 55 0D 0A`), `ping` keep-alive, reconnect after 4 s of silence. The
   bridge only connects boards you connect or assign, so it won't take a board that
   Fennec2 is using by accident.
-- **Assign.** *Rides on* picks the xBot; *Power from* picks the endpoint that carries
-  watts (guessed from names like `P_out`; switched on with `ep-man index` if the
-  board had it off). Saved in `bridge/receivers.json` by MAC, so assigned boards
+- **Assign.** *Rides on* (Flyway view) picks the xBot, *At point* (Cage view) the cage
+  point; setting one clears the other. *Power from*, *Voltage from* and *Current from*
+  pick the endpoints that carry W, V and A. They're guessed on first contact from the
+  unit the board reports for each endpoint, or else from names like `P_out`, `V_out`
+  and `I_out`, and switched on with `ep-man index` if the board had them off. Saved in `bridge/receivers.json` by MAC, so assigned boards
   reconnect by themselves after a restart.
-- **Monitor.** The mover's card leads with its received power and a 60 s trend, the
-  3D view labels the mover with it, and the readings strip totals it.
+- **Monitor.** The receiver's card, and the mover's or point's, show power, voltage and
+  current side by side, each with a 60 s trend. The 3D view labels the mover with its
+  power and the point with all three, and the readings strip totals the power.
 
 No board on hand? `bridge\fake_saguaro.py` runs fake boards (MACs `02:00:00:5A:67:xx`, a
 locally administered range no real board uses) that speak the same
@@ -130,22 +160,34 @@ protocol over real sockets:
 .\.venv\Scripts\python.exe bridge\pmc_bridge.py          # terminal 2: as usual
 ```
 
-For tests, `--receivers-file PATH` keeps assignments out of the real `bridge/receivers.json`.
+For tests, `--receivers-file PATH` keeps assignments out of the real `bridge/receivers.json`;
+cage points then go to `cage_points.json` in the same folder. If a bridge is already
+running, give the test one its own `--port`: on Windows a second bridge can bind 8765
+too, and requests may reach the old one.
 
 The protobuf decoding is hand-written (stdlib only) and was checked against the official
 protobuf library compiled from Fennec2's `.proto`, both directions.
 
-## Replacing the simulation
+## Tests
 
-Two data sources, both already understood:
+The bridge has a stdlib `unittest` suite in `tests/`. It covers the protobuf codec,
+endpoint guessing, points and assignments, snapshot readings, request validation, and
+the HTTP routes against a real server on a random port. It never binds 8765, never
+listens for or connects to real boards, and keeps its stores in a temp folder.
+
+```powershell
+.\.venv\Scripts\python.exe -m unittest discover -s tests -v
+```
+
+## Data sources
 
 | What | Where it comes from |
 |---|---|
-| Receiver power | Flyway: Saguaro boards, live now (see below). Cage: Fennec2's VISA loads (SDL1030X-E, KEL2030) answer `:MEAS:POW?` directly; no V×I needed. |
+| Receiver power | Saguaro boards, on the flyway and in the cage (above). Fennec2's VISA loads (SDL1030X-E, KEL2030) answer `:MEAS:POW?` directly if the cage ever needs them. |
 | Mover pose | `PMCLIB.dll`, referenced directly from C#. See [docs/PMI-PMCLIB.md](docs/PMI-PMCLIB.md). |
 
-Cage receiver positions are configuration you measure once and type in. The rig does
-not report them and never will.
+Cage positions are configuration you measure once and type in. The rig does not
+report them and never will.
 
 ## Known gaps
 
@@ -154,8 +196,10 @@ not report them and never will.
 - The CAD shows a beam passing through the cage and out the far side. If that is a
   rail the TX travels along rather than a fixed mount, the cage becomes a second
   sweep rig and this tool needs rethinking on that side.
-- Cage dimensions are hard-coded at 1500 mm (`BAR_LEN` near the top of `index.html`).
-  If the real frame differs, that is the one constant to change.
-- Downloads are blocked inside a published artifact, so the CSV tab displays rows for
-  copying rather than offering a file. Running `index.html` locally has no such limit,
-  so a real export is straightforward if it is wanted.
+- Cage dimensions are hard-coded: `BAR_LEN` (1500 mm, one bar) near the top of
+  `index.html`, with the cage two bars a side. If the real frame differs, that is the
+  constant to change.
+- Recorded readings (**Plot data**) live in the browser tab only; a reload clears them.
+  Export CSV to keep a run.
+- The cage's TX doesn't report its output, so *Sent* and *Efficiency* plots are Flyway
+  only (from stator power, which also includes levitation and motion).

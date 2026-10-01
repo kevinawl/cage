@@ -6,57 +6,61 @@ Confluence page.
 
 ## Structure
 
-A 1500 mm cube whose every face is divided 2×2 by mid-span members. Bars exist only
-where they lie **on a face** — nothing crosses the working volume, which is both what
-the CAD shows and what you would want in a test cage.
+A **3 m cube** whose every face is divided 2×2 by mid-span members. Lines exist only
+where they lie **on a face**, so nothing crosses the working volume. That is what the
+CAD shows, and it's what you'd want in a test cage.
 
-That gives **24 members, every one of them 1500 mm**:
+Every **bar is 1.5 m**: one span between two joints. Each of the 24 lattice lines is
+two bars joined at its middle, giving **48 bars**:
 
 | Group | Count | Runs |
 |---|---|---|
-| `X-*` | 8 | west → east |
-| `Y-*` | 8 | south → north |
-| `Z-*` | 8 | floor → top |
+| `X-*` | 16 | west → east |
+| `Y-*` | 16 | south → north |
+| `Z-*` | 16 | floor → top |
 
-Generated in `index.html` rather than listed by hand — see the `BARS` block near the
-top. Changing `BAR_LEN` rescales everything.
+The bars are generated in `index.html` rather than listed by hand: see the `BARS`
+block near the top. `BAR_LEN` is one bar, and the cage is two bars a side (`CAGE`).
 
 ## Coordinates
 
-Origin at the centre of the cage floor. X and Y run −750 to +750, Z runs 0 to 1500
-upward. The inspector shows each receiver's X/Y/Z as a read-only cross-check.
+Origin at the centre of the cage floor. X runs west → east and Y south → north, both
+−1500 to +1500. Z runs 0 to 3000 upward. All values are in mm. Cage points (where
+receivers sit) are typed in these coordinates. The 3D view draws a ruler for each axis,
+with ticks every 250 mm, numbers every 500 mm, long ticks at the joints and each bar's
+span labelled `1.5 m`.
 
 ## Naming
 
 Systematic, so a bar id can be read without a diagram:
 
 ```
-X-TOP-S     X bar · top level      · south line
-Y-MID-E     Y bar · mid height     · east line
-Z-NW        Z post · north-west corner
+X-TOP-S-W     X bar · top level  · south line · west bar of the two
+Y-MID-E-N     Y bar · mid level  · east line  · north bar of the two
+Z-NW-LO       Z bar · north-west post · lower bar (floor to mid joint)
 ```
 
-Levels are `BOT` (z=0), `MID` (z=750), `TOP` (z=1500). Lines are `S`/`C`/`N` for X
-bars and `W`/`C`/`E` for Y bars, where `C` is the centre line — omitted from `Z-*`
-ids, so the mid-face posts are `Z-N`, `Z-S`, `Z-E`, `Z-W` and the corners are
-`Z-NW`, `Z-NE`, `Z-SW`, `Z-SE`.
+Levels are `BOT` (z=0), `MID` (z=1500) and `TOP` (z=3000). Lines are `S`/`C`/`N` for X
+bars and `W`/`C`/`E` for Y bars, where `C` is the centre line. `C` is left out of `Z-*`
+ids, so the mid-face posts are `Z-N`, `Z-S`, `Z-E` and `Z-W`, and the corner posts are
+`Z-NW`, `Z-NE`, `Z-SW` and `Z-SE`. The last part says which of the two bars on that line
+is meant: `W`/`E`, `S`/`N`, or `LO`/`HI`.
 
 ## Measuring along a bar
 
-Every bar's zero end is fixed and stated in the UI, chosen so a reading matches what
-a tape gives you starting from the natural corner:
+Every bar has a fixed zero end, chosen so the reading matches a tape laid from that end:
 
-- X bars — 0 at the **west end**
-- Y bars — 0 at the **south end**
-- Z posts — 0 at the **floor**
+- X bars: 0 at the bar's **west end**
+- Y bars: 0 at the bar's **south end**
+- Z bars: 0 at the **floor** (`LO`) or at the **mid joint** (`HI`)
 
-A receiver position is therefore `(bar id, distance in mm)`, e.g. `Z-NW @ 910 mm`.
-That is also how it appears in the CSV column header, so a logged run carries its own
-geometry.
+Each reading is 0 to 1500 mm. When a point lies on a bar (within 1 mm), the point
+editor shows it as the bar id and a distance, e.g. `Z-NW-HI, 600 mm from the mid joint`.
+Clicking a bar in the view puts the selected point there, snapped to 10 mm.
 
 ## The stand
 
-Off the **south-east corner**, centre at `(1150, −1250)` — `STAND_X` / `STAND_Y` in
+Off the **south-east corner**, centre at `(1900, −2000)`: `STAND_X` / `STAND_Y` in
 `index.html`. Three shelves: PSU on top, TX electronics on the middle one.
 
 ## What is not modelled
@@ -65,5 +69,5 @@ Off the **south-east corner**, centre at `(1150, −1250)` — `STAND_X` / `STAN
 - The beam passing through the cage and out the far side in the CAD. Left out
   deliberately — if it is a rail the TX travels along rather than a fixed mount, the
   cage becomes a sweep rig and the whole cage side needs rethinking.
-- The transmitter is a model parameter (position only, set in the Stand panel) and is
-  not drawn. The link lines converge on it.
+- The transmitter's position in the cage. Nothing uses it yet; add it as a point if it
+  helps to see it.

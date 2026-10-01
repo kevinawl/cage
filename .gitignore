@@ -2,3 +2,4 @@
 receivers.json
 *.tmp
 __pycache__/
+cage_points.json
