@@ -3,7 +3,7 @@
 Proof of concept for the *Graph Automation Feature* — delivered power shown against
 position, on two separate test rigs.
 
-Spec: [Graph Automation Feature](https://awle.atlassian.net/wiki/spaces/~712020668dad7d79b94b1991606ab1a9931a0c/pages/1625128980/Graph+Automation+Feature)
+Spec: [Graph Automation Feature](https://awle.atlassian.net/wiki/spaces/BK/pages/1658978305/Manuel+d+utilisateur+-+Internal+Data+Tool)
 (Confluence, page id `1625128980`).
 
 ## Running it
