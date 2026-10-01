@@ -66,7 +66,8 @@ reach the old one. For experiments, give it its own `--port` and `--receivers-fi
 | `web/js/state.js`, `bridge.js` | The page's state and the bridge client that fills it. |
 | `web/js/scene.js`, `cage-geometry.js`, `cage-view.js`, `flyway-view.js`, `pointer.js` | The 3D views and mouse/touch handling. |
 | `web/js/*-panel.js`, `header.js`, `trends.js` | The side panels, the readings strip and badge, the sparklines. |
-| `web/js/recorder.js`, `plot-*.js` | Recording, CSV export, and the Plot data dialog. |
+| `web/js/recorder.js`, `plot-*.js` | Recording, CSV export, the Plot data dialog and its PNG export. |
+| `tools/capture_docs.py` | Regenerates the screenshots in `docs/images/` against a mock rig. |
 | `tests/` | Bridge tests (stdlib `unittest`). |
 | `docs/` | Cage geometry and bar naming; PMC library findings. |
 
@@ -130,8 +131,11 @@ stator W on the flyway), and plots it, filtered by reading, time range and recei
 - **vs position:** each spot's mean against distance from a chosen point (add the TX as
   a point) or against X, Y or Z.
 
-**Export CSV** writes `time, receiver, mac, rig, place, x_mm, y_mm, z_mm, power_W,
-voltage_V, current_A, stator_W`, one row per reading. Recordings live in the browser
+**Save image** saves the graph on screen as a PNG (2×, titled with rig, view, reading and
+time), ready for a test report. **Export CSV** writes `time, receiver, mac, rig, place,
+x_mm, y_mm, z_mm, power_W, voltage_V, current_A, stator_W`, one row per reading.
+
+![Heat map](docs/images/04-plot-heat-map.png) Recordings live in the browser
 tab: export before reloading.
 
 ## Receivers (Saguaro)
@@ -179,6 +183,11 @@ There is no automated test for the page. To check a front-end change, run the br
 with `--mock` and `fake_saguaro.py` on a spare `--port` with its own
 `--receivers-file`, then go through both rigs, every panel and every Plot data tab
 with the browser console open.
+
+`tools\capture_docs.py` does most of that by itself: it starts its own mock rig, drives
+headless Edge through both rigs, the View panel, every Plot data tab and Save image,
+reports any page errors, and rewrites the screenshots in `docs/images/`. The cage plots
+in those screenshots come from a simulated mapping run.
 
 Conventions:
 

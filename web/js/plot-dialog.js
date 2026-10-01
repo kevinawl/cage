@@ -1,6 +1,7 @@
 /* Plot data, the dialog: its header, the filter row, the tab switching and the 1 s refresh. */
 import {hoverTime, renderHeat, renderScatter, renderTable, renderTime} from "./plot-charts.js";
 import {METRICS, METRIC_BY, PLOT_BINS, PLOT_RANGES, PLOT_REFRESH_MS, PLOT_TABS, clockText, compactCount, metricNow, plot, plotSamples, receiversRecorded, savePlot} from "./plot-model.js";
+import {hasImage, saveImage} from "./plot-export.js";
 import {hideSpots, syncSpots} from "./plot-spots.js";
 import {exportCsv, rec} from "./recorder.js";
 import {state} from "./state.js";
@@ -59,6 +60,19 @@ function renderPlotHead(){
   $("plotClear").textContent = performance.now()-plot.clearArmed < 3000 ? "Click again to clear" : "Clear";
   $("plotCsv").disabled = !n; $("plotClear").disabled = !n;
 }
+/* Save image works on what the body shows, so it follows each redraw of the body. */
+function renderSaveButton(){
+  var png = $("plotPng"), image = hasImage(plotBody);
+  png.disabled = !image;
+  png.title = image ? "Save the graph on screen as a PNG" : plot.tab === "table" ? "A table: use Export CSV" : "Nothing to save yet";
+}
+/* The saved image's title and file name say which rig, view and reading it shows. */
+function savePlotImage(){
+  var tab = PLOT_TABS.filter(function(t){ return t[0] === plot.tab; })[0], m = metricNow();
+  var rig = state.sys === "cage" ? "Cage" : "Flyway", stamp = new Date().toISOString().slice(0, 19).replace(/[-:]/g, "").replace("T", "-");
+  var title = rig+" · "+tab[1]+" · "+m.label+" ("+m.unit+") · "+new Date().toLocaleString();
+  saveImage(plotBody, title, "cage-plot-"+state.sys+"-"+plot.tab+"-"+stamp).catch(function(e){ console.error("Save image failed", e); });
+}
 export function renderPlot(){ renderPlotHead(); renderPlotBar(); renderPlotBody(); }
 function renderPlotBody(){
   plot.lastDraw = performance.now(); plot.tips = []; plot.time = null;
@@ -69,10 +83,11 @@ function renderPlotBody(){
     plotBody.innerHTML = '<div class="empty"><b>'+(rec.samples.length ? "Nothing in this selection" : "No readings yet")+'</b>'+
       (rec.on ? "Every reading is recorded while a receiver streams "+what+". Move it between points to build the map."
               : "Recording is paused. Resume it to collect readings.")+'</div>';
-    return;
+  } else {
+    var draw = {heat:renderHeat, table:renderTable, time:renderTime, scatter:renderScatter}[plot.tab] || renderHeat;
+    plotBody.innerHTML = draw(samples, m, rig);
   }
-  var draw = {heat:renderHeat, table:renderTable, time:renderTime, scatter:renderScatter}[plot.tab] || renderHeat;
-  plotBody.innerHTML = draw(samples, m, rig);
+  renderSaveButton();
 }
 
 /* ---------- wiring ---------- */
@@ -81,6 +96,7 @@ $("plotClose").onclick = function(){ openPlot(false); };
 plotPop.addEventListener("click", function(e){ if (e.target === plotPop) openPlot(false); });
 $("plotRec").onclick = function(){ rec.on = !rec.on; renderPlot(); };
 $("plotCsv").onclick = exportCsv;
+$("plotPng").onclick = savePlotImage;
 $("plotClear").onclick = function(){
   if (performance.now()-plot.clearArmed < 3000){ rec.samples = []; plot.clearArmed = -Infinity; syncSpots(); renderPlot(); return; }
   plot.clearArmed = performance.now(); renderPlotHead();
