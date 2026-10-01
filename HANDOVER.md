@@ -9,11 +9,9 @@ Cage Power Map shows the power Saguaro receivers get against where they are, on 
 3 m cage and on the PMI flyway: live in 3D, recorded, and plotted (heat map,
 per-location table, over time, against distance), saved as PNG or CSV.
 
-- [README.md](README.md): how it works, the code map, the conventions.
+- [README.md](README.md): how to run it and where the code is.
 - Features to keep in Fennec, with screenshots (French):
   [Manuel d'utilisateur - Internal Data Tool](https://awle.atlassian.net/wiki/spaces/BK/pages/1658978305/Manuel+d+utilisateur+-+Internal+Data+Tool)
-- [docs/CAGE-GEOMETRY.md](docs/CAGE-GEOMETRY.md): the cage's bars and their names.
-- [docs/PMI-PMCLIB.md](docs/PMI-PMCLIB.md): what the PMC library is, and why Fennec can reference it directly.
 
 ## Run it
 
@@ -49,7 +47,7 @@ Review it, push it, then merge it into `main`.
       organisation (GitHub → Settings → Transfer), or give a teammate admin access.
 - [ ] **Move the spec into the team space.** *Graph Automation Feature* lives in Kevin's
       personal Confluence space (`~712020…`, page `1625128980`). Move it into BK, then
-      update its links in `README.md` and `docs/CAGE-GEOMETRY.md`.
+      update its link in `README.md`.
 - [ ] **Put `pmclib-117.15.01-py3.zip` on a shared drive.** The only copy is in Kevin's
       `~/Downloads`. Write its path here and in `requirements.txt`.
 - [ ] **Add the screenshots to the Confluence page,** in their marked slots.
