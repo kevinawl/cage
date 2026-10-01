@@ -80,11 +80,14 @@ class Pages(Server):
         self.assertEqual(response.status, 302)
         self.assertEqual(response.getheader("Location"), "/index.html?bridge=same&view=fly")
 
-    def test_page(self):
+    def test_page_and_its_modules(self):
         response, body = self.request("GET", "/index.html")
         self.assertEqual(response.status, 200)
         self.assertTrue(response.getheader("Content-Type").startswith("text/html"))
-        self.assertIn(b"Cage Power Map", body)
+        self.assertIn(b'<script type="module" src="js/main.js">', body)
+        for path, kind in (("/js/main.js", "text/javascript"), ("/styles.css", "text/css")):
+            response, _ = self.request("GET", path)
+            self.assertEqual((response.status, response.getheader("Content-Type").split(";")[0]), (200, kind), path)
 
     def test_nothing_outside_web_is_served(self):
         for path in ("/../bridge/pmc_bridge.py", "/%2e%2e/README.md", "/nope.js", "/js"):
