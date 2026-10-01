@@ -1,0 +1,92 @@
+<!doctype html>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Cage Power Map</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Geist:wght@400..700&family=Geist+Mono:wght@400..600&display=swap">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%2315171c'/%3E%3Crect x='11' y='11' width='10' height='10' rx='3' fill='%232f6fdb'/%3E%3C/svg%3E">
+<link rel="stylesheet" href="styles.css">
+
+<div class="wrap">
+  <div class="top">
+    <div class="brand">
+      <div class="mk"><span></span></div>
+      <div><h1>Cage Power Map</h1><div class="sub">AWL-E · Bench instrumentation</div></div>
+    </div>
+    <div class="sysswitch" role="tablist" aria-label="Test system">
+      <button class="sysbtn" role="tab" aria-selected="true" data-sys="cage">
+        <svg class="ic" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 5l6-3 6 3v6l-6 3-6-3V5z"/><path d="M2 5l6 3 6-3M8 8v6"/></svg>Cage</button>
+      <button class="sysbtn" role="tab" aria-selected="false" data-sys="fly">
+        <svg class="ic" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="1.5" y="3.5" width="13" height="9" rx="1"/><path d="M6 3.5v9M10.5 3.5v9M1.5 8h13"/></svg>Flyway</button>
+    </div>
+    <span class="badge link" id="srcBadge"><span class="dot"></span>—</span>
+    <button class="btn" id="btnPlot" aria-haspopup="dialog" aria-expanded="false" aria-controls="plotPop">
+      <svg class="ic" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M2 2.5v11h12"/><path d="M4.5 10.5l3-3.5 2.5 2 3.5-4.5"/></svg>Plot data<span class="pl-count" id="plotCount"></span></button>
+    <button class="btn" id="btnView" aria-haspopup="dialog" aria-expanded="false" aria-controls="viewPop">
+      <svg class="ic" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round">
+        <path d="M2 4.5h7M12.5 4.5H14M2 11.5h2.5M8 11.5h6"/><circle cx="10.75" cy="4.5" r="1.75"/><circle cx="6.25" cy="11.5" r="1.75"/></svg>View</button>
+  </div>
+
+  <div class="kpis" id="kpis"></div>
+
+  <div class="main">
+    <div class="col">
+      <section class="panel">
+        <header>
+          <h2 id="viewTitle">Cage</h2><div class="sp"></div>
+          <span class="hsub" id="scaleNote">Grid and ticks every 250 mm</span>
+          <div class="legend-ramp" id="rampLegend"><span class="lk">Received</span><span>0</span><div class="ramp" id="rampBar"></div><span id="rampMax">1 W</span></div>
+          <div class="legend-ramp" id="flyLegend" hidden><span class="lk">Power draw</span><span>0</span><div class="ramp" id="flyRamp"></div><span id="flyMax">100 W</span></div>
+        </header>
+        <div class="stage">
+          <canvas id="gl"></canvas>
+          <div class="hint" id="hint"></div>
+          <div class="tip" id="tip"></div>
+        </div>
+      </section>
+
+      <section class="panel" id="flywayPanel" hidden>
+        <header><h2>Flyways</h2><span class="hsub" id="fwSub">Power draw, last 60 s</span><div class="sp"></div>
+          <span class="hsum" id="fwTotal"></span></header>
+        <div class="fwgrid" id="fwgrid"></div>
+      </section>
+
+    </div>
+
+    <div class="rail">
+      <section class="panel" id="ptPanel">
+        <header><h2>Points</h2><span class="hsub">Where receivers sit</span><div class="sp"></div><button class="btn sm" id="btnAddPt">Add</button></header>
+        <div class="pt-err" id="ptErr" hidden></div>
+        <div class="ptlist" id="ptlist"></div>
+      </section>
+      <section class="panel" id="moverPanel" hidden><header><h2>Movers</h2></header><div id="mlist"></div></section>
+      <section class="panel" id="rxbPanel" hidden>
+        <header><h2>Receivers</h2><span class="hsub">Saguaro boards</span><div class="sp"></div><span class="hsum" id="rxbCount"></span></header>
+        <div id="rxblist"></div>
+      </section>
+    </div>
+  </div>
+</div>
+
+<div class="viewpop" id="viewPop" role="dialog" aria-label="View options" hidden></div>
+<div class="plotpop" id="plotPop" role="dialog" aria-modal="true" aria-labelledby="plotTitle" hidden>
+  <div class="plotwin">
+    <div class="pl-hd">
+      <h3 id="plotTitle">Plot data</h3><span class="hsub" id="plotSub"></span>
+      <button class="btn sm pl-rec" id="plotRec" aria-pressed="true"><i></i><span>Recording</span></button>
+      <button class="btn sm" id="plotPng" title="Save the graph on screen as a PNG">Save image</button>
+      <button class="btn sm" id="plotCsv">Export CSV</button>
+      <button class="btn sm" id="plotClear">Clear</button>
+      <button class="pl-x" id="plotClose" aria-label="Close">
+        <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><path d="M4 4l8 8M12 4l-8 8"/></svg></button>
+    </div>
+    <div class="pl-bar" id="plotBar"></div>
+    <div class="pl-body" id="plotBody"></div>
+    <div class="pl-foot">Readings are kept in this tab only and a reload clears them. Export CSV to keep a run.</div>
+  </div>
+</div>
+<div class="ftip" id="ftip" role="tooltip"></div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script type="module" src="js/main.js"></script>
