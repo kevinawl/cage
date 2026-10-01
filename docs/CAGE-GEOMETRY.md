@@ -58,11 +58,6 @@ geometry.
 
 Off the **south-east corner**, centre at `(1150, −1250)` — `STAND_X` / `STAND_Y` in
 `index.html`. Three shelves: PSU on top, TX electronics on the middle one.
-
-## What is not modelled
-
-- The grey box inside the cage in the CAD. Unclear what it is.
-- The beam passing through the cage and out the far side in the CAD. Left out
   deliberately — if it is a rail the TX travels along rather than a fixed mount, the
   cage becomes a sweep rig and the whole cage side needs rethinking.
 - The transmitter is a model parameter (position only, set in the Stand panel) and is
