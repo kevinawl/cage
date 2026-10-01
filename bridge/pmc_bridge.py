@@ -133,7 +133,7 @@ def parse_args(argv=None):
     parser.add_argument("--hz", type=float, default=20, help="poll rate")
     parser.add_argument("--gain-mastership", action="store_true",
                         help="take mastership on connect (only if reads fail without it)")
-    parser.add_argument("--mock", action="store_true", help="fake movers, no hardware")
+    parser.add_argument("--mock", action="store_true", help="simulated movers, no PMC")
     parser.add_argument("--no-receivers", action="store_true", help="don't listen for Saguaro receiver boards")
     parser.add_argument("--receivers-file", default=None, metavar="PATH",
                         help="where receiver assignments are saved (default bridge/receivers.json); "

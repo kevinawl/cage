@@ -8,7 +8,7 @@ Session: the host sends "\\r<cmd>\\r" commands over TCP; the board answers with
 protobuf McuToHostPacket frames separated by AA 55 0D 0A
 (Fennec2: Communication/protobuf/fennec2.proto).
 
-The schema is seven small messages, so a hand-written proto3 codec keeps the
+The schema is seven small messages, so a hand-written proto3 decoder keeps the
 bridge standard-library only. It was checked against the official protobuf
 library compiled from Fennec2's .proto, in both directions.
 """
@@ -58,7 +58,6 @@ PACKET = {
 }
 PACKET_KINDS = ("telemetry", "ack", "mcu_name", "ep_man_list")
 ENDPOINT_TYPES = {1: "float", 2: "int", 3: "bool", 4: "string"}
-ENDPOINT_TYPE_CODES = {name: code for code, name in ENDPOINT_TYPES.items()}
 
 _DEFAULTS = {"int": 0, "uint": 0, "enum": 0, "bool": False, "float": 0.0, "str": ""}
 _SKIP = object()
@@ -155,77 +154,3 @@ def _fill_defaults(out, spec):
         scalar = isinstance(kind, str)                  # nested messages have no default
         if name not in out and name != "value" and not repeated and scalar and kind in _DEFAULTS:
             out[name] = _DEFAULTS[kind]
-
-
-# --------------------------------------------------------------------------- encoding
-# The board's side of the protocol: used by fake_saguaro.py.
-
-def encode_packet(timestamp_ms, kind, body):
-    if kind not in _ENCODERS:
-        raise ValueError(kind)
-    return _varint_field(1, timestamp_ms) + _ENCODERS[kind](body)
-
-
-def _encode_varint(value):
-    value &= UINT64
-    out = bytearray()
-    while True:
-        byte = value & 0x7F
-        value >>= 7
-        out.append(byte | (0x80 if value else 0))
-        if not value:
-            return bytes(out)
-
-
-def _varint_field(field, value):
-    return _encode_varint(field << 3 | VARINT) + _encode_varint(value)
-
-
-def _bytes_field(field, data):
-    return _encode_varint(field << 3 | LENGTH) + _encode_varint(len(data)) + data
-
-
-def _float_field(field, value):
-    return _encode_varint(field << 3 | FIXED32) + struct.pack("<f", value)
-
-
-def _encode_mcu_name(body):
-    return _bytes_field(4, _bytes_field(1, body["device_name"].encode()) +
-                        _bytes_field(2, body["firmware_version"].encode()))
-
-
-def _encode_endpoint_info(endpoint):
-    return _bytes_field(1, _varint_field(1, endpoint["sensor_id"]) +
-                        (_varint_field(2, 1) if endpoint["active"] else b"") +
-                        _bytes_field(3, endpoint["name"].encode()) +
-                        _bytes_field(4, endpoint.get("name_type", "").encode()) +
-                        _varint_field(5, ENDPOINT_TYPE_CODES[endpoint["type"]]))
-
-
-def _encode_ep_man_list(endpoints):
-    return _bytes_field(5, b"".join(_encode_endpoint_info(e) for e in endpoints))
-
-
-def _encode_endpoint_data(reading):
-    value = reading["value"]
-    if isinstance(value, bool):                # before int: bool is an int in Python
-        encoded = _varint_field(5, int(value))
-    elif isinstance(value, float):
-        encoded = _float_field(3, value)
-    elif isinstance(value, int):
-        encoded = _varint_field(4, value)
-    else:
-        encoded = _bytes_field(6, str(value).encode())
-    return _bytes_field(1, _varint_field(1, reading["sensor_id"]) + _varint_field(2, 1) + encoded)
-
-
-def _encode_telemetry(readings):
-    return _bytes_field(2, b"".join(_encode_endpoint_data(r) for r in readings))
-
-
-def _encode_ack(body):
-    return _bytes_field(3, _varint_field(1, body.get("command_id", 0)) + _varint_field(2, 1))
-
-
-_ENCODERS = {"mcu_name": _encode_mcu_name, "ep_man_list": _encode_ep_man_list,
-             "telemetry": _encode_telemetry, "ack": _encode_ack}

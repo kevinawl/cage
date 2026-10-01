@@ -24,8 +24,8 @@ py -3.12 -m venv .venv
 # open http://localhost:8765
 ```
 
-Without hardware, run `bridge\fake_saguaro.py` next to `pmc_bridge.py --mock`. This is a
-prototype with no automated tests; README → Development says how to check a change.
+`--mock` simulates the PMC; the receivers need real Saguaro boards. This is a prototype
+with no tests; README → Development says how to check a change.
 
 ## Branch state
 
@@ -37,8 +37,8 @@ The cleanup is on the local branch **`cleanup/handover`**, on top of `main`, and
 3. The page split from one 2,400-line `index.html` into `web/` (markup, styles, ES modules).
 4. The README, `requirements.txt`, `.gitattributes` and this file.
 5. Fixes from a review of the refactor (stricter request origins and file paths).
-6. Save image in Plot data, `tools/capture_docs.py` and the screenshots in `docs/images/`.
-7. The test suite removed: this is a prototype.
+6. Save image in Plot data.
+7. Test code removed (unit tests, fake boards, screenshot tool): this is a prototype.
 
 Review it, push it, then merge it into `main`.
 
@@ -52,8 +52,7 @@ Review it, push it, then merge it into `main`.
       update its links in `README.md` and `docs/CAGE-GEOMETRY.md`.
 - [ ] **Put `pmclib-117.15.01-py3.zip` on a shared drive.** The only copy is in Kevin's
       `~/Downloads`. Write its path here and in `requirements.txt`.
-- [ ] **Add the screenshots to the Confluence page:** drag each file from `docs/images/`
-      into its marked slot.
+- [ ] **Add the screenshots to the Confluence page,** in their marked slots.
 
 ## Known gaps, for the Fennec version
 

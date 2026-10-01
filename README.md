@@ -23,8 +23,7 @@ so opening `web/index.html` from disk does not work).
 
 ```powershell
 .\.venv\Scripts\python.exe bridge\pmc_bridge.py --ip auto          # search the network for the PMC
-.\.venv\Scripts\python.exe bridge\pmc_bridge.py --mock             # fake movers, no hardware
-.\.venv\Scripts\python.exe bridge\fake_saguaro.py                  # fake receiver boards (another terminal)
+.\.venv\Scripts\python.exe bridge\pmc_bridge.py --mock             # simulated movers, no PMC
 ```
 
 Run one bridge at a time: on Windows a second one can also bind 8765 and requests may
@@ -59,7 +58,6 @@ reach the old one. For experiments, give it its own `--port` and `--receivers-fi
 | `bridge/events.py` | `EventHub`: the latest of each event, handed to every connected browser. |
 | `bridge/saguaro.py` | Board sessions (Fennec2's state machine), `ReceiverHub` (discovery, assignments, endpoint guessing), `CagePoints`. |
 | `bridge/saguaro_protocol.py` | The wire format: announces, framing, a hand-written proto3 codec. |
-| `bridge/fake_saguaro.py` | Fake boards speaking the real protocol over real sockets. |
 | `web/index.html`, `web/styles.css` | Markup and styles. |
 | `web/js/main.js` | Entry point: wires the bridge to the views, switches rigs, runs the frame loop. |
 | `web/js/config.js`, `theme.js`, `settings.js`, `labels.js` | Constants (geometry, timing, colours), the chosen colours, the View options, display labels. |
@@ -67,7 +65,6 @@ reach the old one. For experiments, give it its own `--port` and `--receivers-fi
 | `web/js/scene.js`, `cage-geometry.js`, `cage-view.js`, `flyway-view.js`, `pointer.js` | The 3D views and mouse/touch handling. |
 | `web/js/*-panel.js`, `header.js`, `trends.js` | The side panels, the readings strip and badge, the sparklines. |
 | `web/js/recorder.js`, `plot-*.js` | Recording, CSV export, the Plot data dialog and its PNG export. |
-| `tools/capture_docs.py` | Regenerates the screenshots in `docs/images/` against a mock rig. |
 | `docs/` | Cage geometry and bar naming; PMC library findings. |
 
 Every module starts with a one-line comment saying what it owns. Dependencies point
@@ -134,8 +131,7 @@ stator W on the flyway), and plots it, filtered by reading, time range and recei
 time), ready for a test report. **Export CSV** writes `time, receiver, mac, rig, place,
 x_mm, y_mm, z_mm, power_W, voltage_V, current_A, stator_W`, one row per reading.
 
-![Heat map](docs/images/04-plot-heat-map.png) Recordings live in the browser
-tab: export before reloading.
+Recordings live in the browser tab: export before reloading.
 
 ## Receivers (Saguaro)
 
@@ -154,10 +150,6 @@ The bridge finds and reads boards the way Fennec2 does (protocol from Fennec2 v1
   with `ep-man index` if needed. Saved by MAC in `bridge/receivers.json`; assigned
   boards reconnect by themselves after a restart.
 
-Fake boards (`bridge\fake_saguaro.py`) use MACs `02:00:00:5A:67:xx`, a locally
-administered range no real board uses. Board 2 starts with its power endpoint off, to
-exercise `ep-man index`.
-
 ## View options
 
 **View** in the header: which sections and 3D details are shown, and the colours
@@ -168,15 +160,9 @@ chroma step for step.
 
 ## Development
 
-This is a prototype, so there are no automated tests. To check a change, run the bridge
-with `--mock` and `fake_saguaro.py` on a spare `--port` with its own
-`--receivers-file`, then go through both rigs, every panel and every Plot data tab
-with the browser console open.
-
-`tools\capture_docs.py` does most of that by itself: it starts its own mock rig, drives
-headless Edge through both rigs, the View panel, every Plot data tab and Save image,
-reports any page errors, and rewrites the screenshots in `docs/images/`. The cage plots
-in those screenshots come from a simulated mapping run.
+This is a prototype: there are no tests. To check a change, run a bridge on a spare
+`--port` with its own `--receivers-file` and go through both rigs, every panel and
+every Plot data tab with the browser console open.
 
 Conventions:
 
