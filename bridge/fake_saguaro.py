@@ -19,7 +19,7 @@ import socket
 import threading
 import time
 
-from saguaro import DELIM, GROUP, PORT, encode_packet
+from saguaro_protocol import DELIM, GROUP, PORT, encode_packet
 
 
 class FakeBoard:
