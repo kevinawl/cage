@@ -72,10 +72,11 @@ export function niceScale(lo, hi, count){
 export function tickText(v, step){ var dp = step >= 1 ? 0 : Math.min(4, Math.ceil(-Math.log(step)/Math.LN10)); return signed(v, dp); }
 export function clockText(t, seconds){ var s = new Date(t).toTimeString(); return seconds ? s.slice(0, 8) : s.slice(0, 5); }
 export function durationText(ms){
-  if (ms < 9500) return +(ms/1000).toFixed(ms < 1000 ? 2 : 1)+" s";   // short time buckets: "0.25 s", not "0 s"
   var s = Math.round(ms/1000);
   return s < 60 ? s+" s" : s < 3600 ? Math.floor(s/60)+" min "+(s%60)+" s" : Math.floor(s/3600)+" h "+Math.floor(s%3600/60)+" min";
 }
+/* A chart's time step, which can be well under a second: "0.25 s", not "0 s". */
+export function stepText(ms){ return ms < 9500 ? +(ms/1000).toFixed(ms < 1000 ? 2 : 1)+" s" : durationText(ms); }
 export function compactCount(n){ return n < 1000 ? String(n) : n < 1e5 ? (n/1000).toFixed(1)+"k" : Math.round(n/1000)+"k"; }
 export function tipFor(html){ plot.tips.push(html); return ' data-tip="'+(plot.tips.length-1)+'"'; }
 export function receiversRecorded(rig){

@@ -406,6 +406,7 @@ class ReceiverHub:
         """First contact: guess power, voltage and current endpoints that aren't set yet,
         by the unit the board reports for them, else by name (P_out, V_out, I_out)."""
         numeric = [e for e in board.endpoints.values() if e["type"] in NUMERIC]
+        guessed = False
         with self._lock:
             assignment = self.assign.setdefault(board.mac, {})
             for key, unit, name_pattern in QUANTITIES:
@@ -416,7 +417,9 @@ class ReceiverHub:
                 guesses = by_unit or by_name
                 if guesses:
                     assignment[key] = guesses[0]
-            self._save()
+                    guessed = True
+            if guessed:
+                self._save()
         self._ensure_active(board)
 
     def _ensure_active(self, board):

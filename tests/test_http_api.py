@@ -90,7 +90,8 @@ class Pages(Server):
             self.assertEqual((response.status, response.getheader("Content-Type").split(";")[0]), (200, kind), path)
 
     def test_nothing_outside_web_is_served(self):
-        for path in ("/../bridge/pmc_bridge.py", "/%2e%2e/README.md", "/nope.js", "/js"):
+        for path in ("/../bridge/pmc_bridge.py", "/%2e%2e/README.md", "/nope.js", "/js",
+                     r"/..\bridge\pmc_bridge.py", "/C:/Windows/win.ini", r"/\\localhost\c$\x"):
             self.assertEqual(self.request("GET", path)[0].status, 404, path)
 
     def test_events_start_with_the_status(self):
@@ -108,9 +109,11 @@ class Api(Server):
         response, _ = self.request("POST", "/api/points", {"x": 0, "y": 0, "z": 0}, origin="https://example.com")
         self.assertEqual(response.status, 403)
 
-    def test_file_pages_may_post(self):
-        response, _ = self.request("POST", "/api/points", {"x": 0, "y": 0, "z": 0}, origin="null")
-        self.assertEqual(response.status, 200)
+    def test_opaque_origins_may_not_post(self):
+        # Origin: null is what a sandboxed iframe on any website sends.
+        for origin in ("null", None):
+            response, _ = self.request("POST", "/api/points", {"x": 0, "y": 0, "z": 0}, origin=origin)
+            self.assertEqual(response.status, 403, origin)
 
     def test_point_lifecycle(self):
         response, body = self.request("POST", "/api/points", {"name": "TX", "x": -1500, "y": 0, "z": 1500})
@@ -144,6 +147,9 @@ class ReceiversDisabled(Server):
     def test_api_says_so(self):
         response, body = self.request("POST", "/api/points", {"x": 0, "y": 0, "z": 0})
         self.assertEqual((response.status, json.loads(body)["error"]), (503, "receivers disabled"))
+
+    def test_unknown_routes_are_still_404(self):
+        self.assertEqual(self.request("POST", "/api/foo")[0].status, 404)
 
 
 if __name__ == "__main__":

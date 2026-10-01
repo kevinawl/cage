@@ -1,6 +1,6 @@
 /* Plot data, the charts: heat map, locations table, over time and vs position, each rendered as an SVG/HTML string. */
 import {CAGE, HALF} from "./config.js";
-import {METRICS, clockText, durationText, locationsOf, niceScale, plot, receiversRecorded, tickText, tipFor, topOf, valueOf} from "./plot-model.js";
+import {METRICS, clockText, durationText, locationsOf, niceScale, plot, receiversRecorded, stepText, tickText, tipFor, topOf, valueOf} from "./plot-model.js";
 import {rec} from "./recorder.js";
 import {pointById, state} from "./state.js";
 import {theme} from "./theme.js";
@@ -186,7 +186,7 @@ export function renderTime(samples, m){
   var legend = order.length > 1 ? '<div class="pl-keys">'+order.map(function(g){
     return '<span><i style="background:'+g.color+'"></i>'+esc(g.name)+'</span>'; }).join("")+'</div>' : '';
   return legend+'<svg class="pl-chart pl-time" viewBox="0 0 '+W+' '+H+'" role="img" aria-label="'+m.label+' over time">'+out+'</svg>'+
-    '<p class="pl-note">'+(order.length === 1 && !sent ? esc(order[0].name)+'. ' : '')+'Each step is the mean over '+durationText(bw)+
+    '<p class="pl-note">'+(order.length === 1 && !sent ? esc(order[0].name)+'. ' : '')+'Each step is the mean over '+stepText(bw)+
     '; the line breaks where nothing was recorded. Hover for the place each reading came from.</p>';
 }
 function nearestPoint(pts, t){

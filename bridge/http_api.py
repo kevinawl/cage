@@ -14,7 +14,8 @@ POST /api/points            {"name", "x", "y", "z"} -> {"id": "P3"}
 POST /api/points/<id>       {any of name, x, y, z}
 POST /api/points/<id>/delete
 
-POSTs are accepted only from the page itself (localhost, or a file:// page),
+POSTs are accepted only from the page itself, as the bridge served it (an Origin of
+http://localhost:<port> or http://127.0.0.1:<port>),
 sent as text/plain so the browser makes no CORS preflight.
 """
 
@@ -87,7 +88,12 @@ def receiver_fields(body, points):
 
 
 def static_file(path):
-    """The file under WEB_ROOT a request path names, or None (missing, or outside it)."""
+    """The file under WEB_ROOT a request path names, or None (missing, or outside it).
+
+    Anything that could leave web/ is refused before touching the file system:
+    resolving a Windows UNC path (two backslashes, a host, a share) alone would connect to that host."""
+    if "\\" in path or ":" in path or ".." in path.split("/"):
+        return None
     target = (WEB_ROOT / path.lstrip("/")).resolve()
     if WEB_ROOT not in target.parents or not target.is_file():
         return None
@@ -98,7 +104,7 @@ def static_file(path):
 
 def make_handler(events, receivers, port):
     """A request handler bound to the event hub and the receiver hub (None: receivers disabled)."""
-    local_origins = {None, "null", f"http://localhost:{port}", f"http://127.0.0.1:{port}"}
+    local_origins = {f"http://localhost:{port}", f"http://127.0.0.1:{port}"}
 
     class Handler(BaseHTTPRequestHandler):
         def log_message(self, *args):
@@ -109,7 +115,7 @@ def make_handler(events, receivers, port):
             body = json.dumps(obj if obj is not None else {"ok": code < 400}).encode()
             self.send_response(code)
             origin = self.headers.get("Origin")
-            if origin in local_origins - {None}:            # file:// pages send Origin: null
+            if origin in local_origins:
                 self.send_header("Access-Control-Allow-Origin", origin)
             self.send_header("Content-Type", "application/json")
             self.send_header("Content-Length", str(len(body)))
@@ -138,8 +144,6 @@ def make_handler(events, receivers, port):
             # Only the page itself may drive the boards: no requests from other sites.
             if self.headers.get("Origin") not in local_origins:
                 return self._error(403, "origin not allowed")
-            if receivers is None:
-                return self._error(503, "receivers disabled")
             parts = [unquote(p) for p in self.path.split("?")[0].strip("/").split("/")]
             if parts[:2] == ["api", "points"]:
                 return self._points(parts[2:])
@@ -148,6 +152,8 @@ def make_handler(events, receivers, port):
             return self._error(404, "unknown route")
 
         def _receiver(self, mac, action):
+            if receivers is None:
+                return self._error(503, "receivers disabled")
             if action == "connect":
                 receivers.connect(mac)
                 return self._reply(200)
@@ -166,6 +172,8 @@ def make_handler(events, receivers, port):
             return self._changed()
 
         def _points(self, rest):
+            if receivers is None:
+                return self._error(503, "receivers disabled")
             if len(rest) > 2 or (rest and not POINT_ID.match(rest[0])):
                 return self._error(404, "unknown route")
             if not rest:
