@@ -1,0 +1,4 @@
+# One line ending in the repo, whatever each machine's core.autocrlf says.
+* text=auto eol=lf
+*.png binary
+*.zip binary

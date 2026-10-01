@@ -1,0 +1,9 @@
+# Python 3.12. The bridge itself is standard library only: nothing to install for it.
+#
+# The real PMC needs pmclib, which is not on PyPI. Install it from PMI's archive
+# (it brings pythonnet and numpy); see HANDOVER.md for where the archive is kept:
+#
+#   .\.venv\Scripts\python.exe -m pip install path\to\pmclib-117.15.01-py3.zip
+#
+# Without it, run the bridge with --mock (fake movers); receivers and the cage
+# work the same.
