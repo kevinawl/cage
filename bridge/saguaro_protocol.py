@@ -158,7 +158,7 @@ def _fill_defaults(out, spec):
 
 
 # --------------------------------------------------------------------------- encoding
-# The board's side of the protocol: used by fake_saguaro.py and the tests.
+# The board's side of the protocol: used by fake_saguaro.py.
 
 def encode_packet(timestamp_ms, kind, body):
     if kind not in _ENCODERS:

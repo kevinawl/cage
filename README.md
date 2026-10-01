@@ -68,7 +68,6 @@ reach the old one. For experiments, give it its own `--port` and `--receivers-fi
 | `web/js/*-panel.js`, `header.js`, `trends.js` | The side panels, the readings strip and badge, the sparklines. |
 | `web/js/recorder.js`, `plot-*.js` | Recording, CSV export, the Plot data dialog and its PNG export. |
 | `tools/capture_docs.py` | Regenerates the screenshots in `docs/images/` against a mock rig. |
-| `tests/` | Bridge tests (stdlib `unittest`). |
 | `docs/` | Cage geometry and bar naming; PMC library findings. |
 
 Every module starts with a one-line comment saying what it owns. Dependencies point
@@ -169,17 +168,7 @@ chroma step for step.
 
 ## Development
 
-```powershell
-.\.venv\Scripts\python.exe -m unittest discover -s tests -v
-```
-
-The suite covers the protocol codec, cage points, the receiver hub (placement rules,
-endpoint guessing, reachability, stale readings), the PMC/mock sources, and the HTTP
-routes against a real server on a random port, including that nothing outside `web/`
-is served. It never binds 8765, never touches the network beyond localhost, and keeps
-its files in a temp folder.
-
-There is no automated test for the page. To check a front-end change, run the bridge
+This is a prototype, so there are no automated tests. To check a change, run the bridge
 with `--mock` and `fake_saguaro.py` on a spare `--port` with its own
 `--receivers-file`, then go through both rigs, every panel and every Plot data tab
 with the browser console open.
