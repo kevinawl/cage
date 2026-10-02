@@ -15,6 +15,9 @@ py -3.12 -m venv .venv
 
 Open **<http://localhost:8765>**.
 
+The real PMC needs pmclib, PMI's Python library; its docs are under
+[PC Platform: Control over Ethernet](https://docs.planarmotor.com/tech-portal/pc-platform-control-over-ethernet).
+
 ## Code
 
 - `bridge/`: Python, reads the PMC and the Saguaro boards and streams to the page. Start with `pmc_bridge.py`.

@@ -5,5 +5,8 @@
 #
 #   .\.venv\Scripts\python.exe -m pip install path\to\pmclib-117.15.01-py3.zip
 #
+# PMI's docs for pmclib (Python, under "PC Platform: Control over Ethernet"):
+#   https://docs.planarmotor.com/tech-portal/pc-platform-control-over-ethernet
+#
 # Without it, run the bridge with --mock (simulated movers); receivers and the cage
 # work the same.
